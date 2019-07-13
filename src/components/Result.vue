@@ -1,6 +1,6 @@
 <template>
   <div class="result-container">
-    <div class="expression">{{ expression }}</div>
+    <div class="expressions">{{ showExpressions }}</div>
     <p class="system-value">{{ systemValue }}</p>
     <ul class="system-list">
       <li
@@ -25,14 +25,9 @@ import { convertSystem } from '@/utils'
 export default {
   name: 'Result',
 
-  data () {
-    return {
-      expression: [] // 表达式
-    }
-  },
-
   computed: {
-    ...mapState([
+    ...mapState([,
+      'expressions',
       'systemType',
       'binValue'
     ]),
@@ -41,8 +36,13 @@ export default {
       'systemValue'
     ]),
 
+    // 显示的表达式
+    showExpressions () {
+      return this.expressions.map(expression => this.convertLabel(expression)).join(``)
+    },
+
+    // 生成进制列表
     systems () {
-      // 生成进制列表
       let systems = {}
       for (let system in SYSTEM) {
         systems[system] = {
@@ -50,10 +50,20 @@ export default {
         }
       }
       return systems
-    }
+    },
   },
 
   methods: {
+    // 转换可视化表达式
+    convertLabel (expression) {
+      switch (expression.type) {
+        case `value`:
+          return convertSystem(expression.value, SYSTEM[`bin`], SYSTEM[this.systemType])
+        default:
+          return expression.value
+      }
+    },
+
     systemClass (type) {
       return {
         active: type === this.systemType
@@ -62,7 +72,7 @@ export default {
 
     // 切换进制
     switchSystem (type) {
-      this.$store.commit("setSystemType", type)
+      this.$store.commit('setSystemType', type)
     }
   }
 }
@@ -70,7 +80,7 @@ export default {
 
 <style lang='scss'>
 .result-container {
-  .expression {
+  .expressions {
     height: 40px;
     margin-top: 5px;
     font-size: 14px;

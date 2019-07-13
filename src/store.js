@@ -7,9 +7,9 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    systemType: `dec`, // 进制类型
+    expressions: [], // 计算表达式
     binValue: `0`, // 当前值的二进制
-    expression: [] // 计算表达式
+    systemType: `dec` // 进制类型
   },
 
   getters: {
@@ -24,16 +24,16 @@ export default new Vuex.Store({
   },
 
   mutations: {
-    setSystemType (state, value) {
-      state.systemType = value
+    setExpressions (state, value) {
+      state.expressions = value
     },
 
     setBinValue (state, value) {
       state.binValue = value
     },
 
-    setExpression (state, value) {
-      state.expression = value
+    setSystemType (state, value) {
+      state.systemType = value
     }
   }
 })

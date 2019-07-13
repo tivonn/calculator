@@ -31,15 +31,11 @@ export default {
   data () {
     return {
       keys: [
-        // type: 类型，
-        // class： 类名，
-        // disableds： 禁用状态对应的进制，
-        // callback：点击回调
         {
-          type: `Lsh`,
-          class: [],
-          disableds: [],
-          callback: this.keyLeftMove
+          type: `Lsh`,  // 类型
+          class: [],  // 类名
+          disableds: [],  // 禁用状态对应的进制
+          callback: this.keyLeftMove  // 点击回调
         },
         {
           type: `Rsh`,
@@ -105,7 +101,7 @@ export default {
           type: `÷`,
           class: [`key-arithmetic`],
           disableds: [],
-          callback: this.keyDivide
+          callback: this.keyArithmetic
         },
         {
           type: `A`,
@@ -141,7 +137,7 @@ export default {
           type: `×`,
           class: [`key-arithmetic`],
           disableds: [],
-          callback: this.keyMutiply
+          callback: this.keyArithmetic
         },
         {
           type: `C`,
@@ -177,7 +173,7 @@ export default {
           type: `-`,
           class: [`key-arithmetic`],
           disableds: [],
-          callback: this.keyMinus
+          callback: this.keyArithmetic
         },
         {
           type: `E`,
@@ -213,7 +209,7 @@ export default {
           type: `+`,
           class: [`key-arithmetic`],
           disableds: [],
-          callback: this.keyAdd
+          callback: this.keyArithmetic
         },
         {
           type: `(`,
@@ -257,14 +253,27 @@ export default {
   },
 
   computed: {
-    ...mapState([
-      'systemType',
-      'binValue'
+    ...mapState([,
+      'expressions',
+      'binValue',
+      'systemType'
     ]),
 
     ...mapGetters([
       'systemValue'
-    ])
+    ]),
+
+    // 判断符号是否可以直接替换
+    canReplace () {
+      // 若当前二进制为初始状态，且表达式最后一项是可被直接替换的符号
+      let lastExpression = this.expressions[this.expressions.length - 1]
+      const canReplaceType = [`move`, `bitwise`, `mod`, `arithmetic`]
+      if (this.binValue === `0` && lastExpression && canReplaceType.some(type => type === lastExpression.type)) {
+        return true
+      } else {
+        return false
+      }
+    },
   },
 
   methods: {
@@ -343,13 +352,13 @@ export default {
 
     // 清除当前值
     keyCe () {
-      this.$store.commit("setBinValue", `0`)
+      this.clearBinValue()
     },
 
     // 重置
     keyReset () {
-      this.$store.commit("setBinValue", `0`)
-      this.$store.commit("setExpression", [])
+      this.clearBinValue()
+      this.clearExpressions()
     },
 
     // 退格
@@ -361,17 +370,35 @@ export default {
       this.setBinValue(systemValue)
     },
 
-    // 除
-    keyDivide () { },
+    // 加减乘除
+    keyArithmetic (arithmetic) {
+      if (this.canReplace) {
+        // 替换符号
+        this.replaceExpression({
+          type: `arithmetic`,
+          value: arithmetic
+        })
+      } else {
+        // 先将当前二进制插入表达式，再插入符号
+        this.addExpression({
+          type: `value`,
+          value: this.binValue
+        })
+        this.clearBinValue()
+        this.addExpression({
+          type: `arithmetic`,
+          value: arithmetic
+        })
+      }
+    },
 
-    // 乘
-    keyMutiply () { },
-
-    // 减
-    keyMinus () { },
-
-    // 加
-    keyAdd () { },
+    // 输入值
+    keyValue (value) {
+      // 将systemValue拼接输入的值后，转化为二进制存储
+      let systemValue =
+        this.systemValue === `0` ? value : this.systemValue.concat(value)
+      this.setBinValue(systemValue)
+    },
 
     // 左括号
     keyLeftBracket () { },
@@ -382,26 +409,68 @@ export default {
     // 切换正负
     switchSign () { },
 
-    // 小数点，目前模式不支持，暂时定义空函数
+    // 小数点，目前程序员模式不支持，暂时定义空函数
     keyDot () { },
 
-    // 输入值
-    keyValue (value) {
-      // 将systemValue拼接输入的值后，转化为二进制存储
-      let systemValue =
-        this.systemValue === `0` ? value : this.systemValue.concat(value)
-      this.setBinValue(systemValue)
+    // 求值
+    keyEqual () {
+      // 先将当前二进制插入表达式，再进行计算
+      this.addExpression({
+        type: `value`,
+        value: this.binValue
+      })
+      let expressions = this.expressions.map(expression => this.convertCalc(expression)).join(``)
+      let result = eval(expressions)
+      this.$store.commit(
+        'setBinValue',
+        convertSystem(result, SYSTEM[`dec`], SYSTEM[`bin`])
+      )
+      this.clearExpressions()
     },
 
-    // 求值
-    keyEqual () { },
+    // 转换表达式为计算的值
+    convertCalc (expression) {
+      switch (expression.type) {
+        case `arithmetic`:
+          const arithmeticMap = {
+            '+': `+`,
+            '-': `-`,
+            '×': `*`,
+            '÷': `/`
+          }
+          return arithmeticMap[expression.value]
+        case `value`:
+          return `0B${expression.value}`
+        default:
+          return expression.value
+      }
+    },
 
-    // 更新二进制的值
+    // 向表达式插入元素
+    addExpression (expression) {
+      this.$store.commit('setExpressions', this.expressions.concat(expression))
+    },
+
+    // 替换表达式最后一个元素
+    replaceExpression (expression) {
+      this.$store.commit('setExpressions', this.expressions.slice(0, this.expressions.length - 1).concat(expression))
+    },
+
+    // 更新当前二进制
     setBinValue (systemValue) {
       this.$store.commit(
-        "setBinValue",
-        convertSystem(systemValue, this.systemType, SYSTEM[`bin`])
+        'setBinValue',
+        convertSystem(systemValue, SYSTEM[this.systemType], SYSTEM[`bin`])
       )
+    },
+
+    // 清除当前二进制
+    clearBinValue () {
+      this.$store.commit('setBinValue', `0`)
+    },
+
+    clearExpressions () {
+      this.$store.commit('setExpressions', [])
     },
 
     // 判断键位禁用状态
