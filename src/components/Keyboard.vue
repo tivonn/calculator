@@ -40,13 +40,13 @@ export default {
           type: `Lsh`,  // 类型
           class: [],  // 类名
           disableds: [],  // 禁用状态对应的进制
-          callback: this.keyLeftMove  // 点击回调
+          callback: this.keyMove  // 点击回调
         },
         {
           type: `Rsh`,
           class: [],
           disableds: [],
-          callback: this.keyRightMove
+          callback: this.keyMove
         },
         {
           type: `Or`,
@@ -267,18 +267,32 @@ export default {
 
     ...mapGetters([
       'systemValue'
-    ])
+    ]),
+
+    // 判断符号是否可以直接替换
+    canReplace () {
+      // 若当前二进制为未输入值状态，且表达式最后一项是可被直接替换的符号
+      let lastExpression = this.expressions[this.expressions.length - 1]
+      const canReplaceType = [`move`, `bitwise`, `mod`, `arithmetic`]
+      if (this.binValue === `0` && lastExpression && canReplaceType.some(type => type === lastExpression.type)) {
+        return true
+      } else {
+        return false
+      }
+    }
   },
 
   methods: {
-    // 左移
-    keyLeftMove () { },
+    // 左移右移
+    keyMove (type) {
+      this.handleExpression({
+        type: `move`,
+        value: type
+      })
+    },
 
     // 逻辑左移
     keyLogicalLeftMove () { },
-
-    // 右移
-    keyRightMove () { },
 
     // 逻辑右移
     keyLogicalRightMove () { },
@@ -319,13 +333,13 @@ export default {
             type: `Lsh`,
             class: ``,
             disableds: [],
-            callback: this.keyLeftMove
+            callback: this.keyMove
           },
           {
             type: `Rsh`,
             class: ``,
             disableds: [],
-            callback: this.keyRightMove
+            callback: this.keyMove
           }
         ]
       this.keys.splice(0, 2, ...moveKeys)
@@ -359,6 +373,7 @@ export default {
     keyReset () {
       this.clearBinValue()
       this.clearExpressions()
+      this.extraLeftBracket = 0
     },
 
     // 退格
@@ -407,29 +422,23 @@ export default {
     },
 
     // 切换正负
-    switchSign () { },
+    switchSign () {
+      let isNegative = this.systemValue.charAt(0) === `-`
+      // 将systemValue退格1位后，转化成二进制存储
+      let systemValue =
+        isNegative ? this.systemValue.slice(1, this.systemValue.length) : `-`.concat(this.systemValue)
+      this.setBinValue(systemValue)
+    },
 
     // 小数点，目前程序员模式不支持，暂时定义空函数
     keyDot () { },
 
-    // 判断符号是否可以直接替换
-    canReplace () {
-      // 若当前二进制为未输入值状态，且表达式最后一项是可被直接替换的符号
-      let lastExpression = this.expressions[this.expressions.length - 1]
-      const canReplaceType = [`move`, `bitwise`, `mod`, `arithmetic`]
-      if (this.binValue === `0` && lastExpression && canReplaceType.some(type => type === lastExpression.type)) {
-        return true
-      } else {
-        return false
-      }
-    },
-
     // 处理表达式
     handleExpression (expression) {
-      if (this.canReplace()) {
+      if (this.canReplace) {
         // 替换符号
         this.replaceExpression(expression)
-      } else if (this.expressions[this.expressions.length - 1].value === `)`) {  // 最后为右括号时，直接插入符号
+      } else if (this.expressions.length && this.expressions[this.expressions.length - 1].value === `)`) {  // 最后为右括号时，直接插入符号
         this.addExpression(expression)
       } else {
         // 先将当前二进制插入表达式，再插入符号
@@ -470,7 +479,6 @@ export default {
       this.$store.commit('setBinValue', `0`)
     },
 
-
     // 求值
     keyEqual () {
       // 先将当前二进制插入表达式，再进行计算
@@ -480,6 +488,14 @@ export default {
           type: `value`,
           value: this.binValue
         })
+      }
+      // 匹配对应数量的括号
+      while (this.extraLeftBracket) {
+        this.addExpression({
+          type: `bracket`,
+          value: `)`
+        })
+        this.extraLeftBracket--
       }
       let expressions = this.expressions.map(expression => this.convertCalc(expression)).join(``)
       let result = eval(expressions)
@@ -493,6 +509,12 @@ export default {
     // 转换表达式为计算的值
     convertCalc (expression) {
       switch (expression.type) {
+        case `move`:
+          const moveMap = {
+            'Lsh': `<<`,
+            'Rsh': `>>`
+          }
+          return moveMap[expression.value]
         case `bitwise`:
           const bitwiseMap = {
             'Or': `|`,

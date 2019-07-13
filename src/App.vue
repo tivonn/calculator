@@ -6,7 +6,7 @@
       <p class="function-list clear-fix">
         <span class="function-item" title="全键盘">全</span>
         <span class="function-item" title="比特绷板键盘">比</span>
-        <span class="function-item switch-length">QWORD</span>
+        <span class="function-item switch-word-length">QWORD</span>
         <span class="function-item" title="内存存储">MS</span>
       </p>
       <keyboard></keyboard>
@@ -58,7 +58,7 @@ export default {
       background-color: #dbdbdb;
     }
   }
-  .switch-length {
+  .switch-word-length {
     width: calc(100% - 300px);
   }
 }
