@@ -38,7 +38,7 @@ export default {
 
     // 显示的表达式
     showExpressions () {
-      return this.expressions.map(expression => this.convertLabel(expression)).join(``)
+      return this.expressions.map(expression => this.convertLabel(expression)).join(` `)
     },
 
     // 生成进制列表
@@ -64,6 +64,7 @@ export default {
       }
     },
 
+    // 进制样式
     systemClass (type) {
       return {
         active: type === this.systemType

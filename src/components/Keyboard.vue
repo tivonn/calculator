@@ -13,7 +13,12 @@
           :disabled="isDisabled(key.disableds)"
           @click="key.callback(key.type)"
         >
-          {{ key.type }}
+          <span>{{ key.type }}</span>
+          <template v-if="key.type === `(`">
+            <span v-if="extraLeftBracket > 0" class="extra-left-bracket">{{
+              extraLeftBracket
+            }}</span>
+          </template>
         </button>
       </td>
     </tr>
@@ -47,25 +52,25 @@ export default {
           type: `Or`,
           class: [],
           disableds: [],
-          callback: this.keyBitwiseOr
+          callback: this.keyBitwise
         },
         {
           type: `Xor`,
           class: [],
           disableds: [],
-          callback: this.keyBitwiseXOr
+          callback: this.keyBitwise
         },
         {
           type: `Not`,
           class: [],
           disableds: [],
-          callback: this.keyBitwiseNot
+          callback: this.keyBitwise
         },
         {
           type: `And`,
           class: [],
           disableds: [],
-          callback: this.keyBitwiseAnd
+          callback: this.keyBitwise
         },
         {
           type: `↑`,
@@ -248,7 +253,8 @@ export default {
           callback: this.keyEqual
         }
       ],
-      isLogicalMove: false // 是否逻辑位移
+      isLogicalMove: false, // 是否逻辑位移,
+      extraLeftBracket: 0 // 左括号比右括号多的数量
     }
   },
 
@@ -261,19 +267,7 @@ export default {
 
     ...mapGetters([
       'systemValue'
-    ]),
-
-    // 判断符号是否可以直接替换
-    canReplace () {
-      // 若当前二进制为初始状态，且表达式最后一项是可被直接替换的符号
-      let lastExpression = this.expressions[this.expressions.length - 1]
-      const canReplaceType = [`move`, `bitwise`, `mod`, `arithmetic`]
-      if (this.binValue === `0` && lastExpression && canReplaceType.some(type => type === lastExpression.type)) {
-        return true
-      } else {
-        return false
-      }
-    },
+    ])
   },
 
   methods: {
@@ -289,17 +283,18 @@ export default {
     // 逻辑右移
     keyLogicalRightMove () { },
 
-    // 按位或
-    keyBitwiseOr () { },
-
-    // 按位异或
-    keyBitwiseXOr () { },
-
-    // 按位非
-    keyBitwiseNot () { },
-
-    // 按位与
-    keyBitwiseAnd () { },
+    // 按位运算
+    keyBitwise (type) {
+      this.handleExpression({
+        type: `bitwise`,
+        value: type
+      })
+      // 按位非需要交换数字与符号顺序
+      if (type === `Not`) {
+        let length = this.expressions.length
+        this.$store.commit('setExpressions', this.expressions.slice(0, length - 2).concat([this.expressions[length - 1], this.expressions[length - 2]]))
+      }
+    },
 
     // 切换（循环）位移
     switchMoveType () {
@@ -348,7 +343,12 @@ export default {
     },
 
     // 取模
-    keyMod () { },
+    keyMod () {
+      this.handleExpression({
+        type: `mod`,
+        value: `mod`
+      })
+    },
 
     // 清除当前值
     keyCe () {
@@ -372,24 +372,10 @@ export default {
 
     // 加减乘除
     keyArithmetic (arithmetic) {
-      if (this.canReplace) {
-        // 替换符号
-        this.replaceExpression({
-          type: `arithmetic`,
-          value: arithmetic
-        })
-      } else {
-        // 先将当前二进制插入表达式，再插入符号
-        this.addExpression({
-          type: `value`,
-          value: this.binValue
-        })
-        this.clearBinValue()
-        this.addExpression({
-          type: `arithmetic`,
-          value: arithmetic
-        })
-      }
+      this.handleExpression({
+        type: `arithmetic`,
+        value: arithmetic
+      })
     },
 
     // 输入值
@@ -401,10 +387,24 @@ export default {
     },
 
     // 左括号
-    keyLeftBracket () { },
+    keyLeftBracket () {
+      this.extraLeftBracket++
+      this.addExpression({
+        type: `bracket`,
+        value: `(`
+      })
+    },
 
     // 右括号
-    keyRightBracket () { },
+    keyRightBracket () {
+      // 左括号数量无法匹配时，不增加右括号
+      if (this.extraLeftBracket <= 0) return
+      this.handleExpression({
+        type: `bracket`,
+        value: `)`
+      })
+      this.extraLeftBracket--
+    },
 
     // 切换正负
     switchSign () { },
@@ -412,37 +412,33 @@ export default {
     // 小数点，目前程序员模式不支持，暂时定义空函数
     keyDot () { },
 
-    // 求值
-    keyEqual () {
-      // 先将当前二进制插入表达式，再进行计算
-      this.addExpression({
-        type: `value`,
-        value: this.binValue
-      })
-      let expressions = this.expressions.map(expression => this.convertCalc(expression)).join(``)
-      let result = eval(expressions)
-      this.$store.commit(
-        'setBinValue',
-        convertSystem(result, SYSTEM[`dec`], SYSTEM[`bin`])
-      )
-      this.clearExpressions()
+    // 判断符号是否可以直接替换
+    canReplace () {
+      // 若当前二进制为未输入值状态，且表达式最后一项是可被直接替换的符号
+      let lastExpression = this.expressions[this.expressions.length - 1]
+      const canReplaceType = [`move`, `bitwise`, `mod`, `arithmetic`]
+      if (this.binValue === `0` && lastExpression && canReplaceType.some(type => type === lastExpression.type)) {
+        return true
+      } else {
+        return false
+      }
     },
 
-    // 转换表达式为计算的值
-    convertCalc (expression) {
-      switch (expression.type) {
-        case `arithmetic`:
-          const arithmeticMap = {
-            '+': `+`,
-            '-': `-`,
-            '×': `*`,
-            '÷': `/`
-          }
-          return arithmeticMap[expression.value]
-        case `value`:
-          return `0B${expression.value}`
-        default:
-          return expression.value
+    // 处理表达式
+    handleExpression (expression) {
+      if (this.canReplace()) {
+        // 替换符号
+        this.replaceExpression(expression)
+      } else if (this.expressions[this.expressions.length - 1].value === `)`) {  // 最后为右括号时，直接插入符号
+        this.addExpression(expression)
+      } else {
+        // 先将当前二进制插入表达式，再插入符号
+        this.addExpression({
+          type: `value`,
+          value: this.binValue
+        })
+        this.clearBinValue()
+        this.addExpression(expression)
       }
     },
 
@@ -454,6 +450,11 @@ export default {
     // 替换表达式最后一个元素
     replaceExpression (expression) {
       this.$store.commit('setExpressions', this.expressions.slice(0, this.expressions.length - 1).concat(expression))
+    },
+
+    // 清除表达式
+    clearExpressions () {
+      this.$store.commit('setExpressions', [])
     },
 
     // 更新当前二进制
@@ -469,8 +470,52 @@ export default {
       this.$store.commit('setBinValue', `0`)
     },
 
-    clearExpressions () {
-      this.$store.commit('setExpressions', [])
+
+    // 求值
+    keyEqual () {
+      // 先将当前二进制插入表达式，再进行计算
+      let type = this.expressions[this.expressions.length - 1].type
+      if (type !== `value` && type !== `bracket`) {
+        this.addExpression({
+          type: `value`,
+          value: this.binValue
+        })
+      }
+      let expressions = this.expressions.map(expression => this.convertCalc(expression)).join(``)
+      let result = eval(expressions)
+      this.$store.commit(
+        'setBinValue',
+        convertSystem(result, SYSTEM[`dec`], SYSTEM[`bin`])
+      )
+      this.clearExpressions()
+    },
+
+    // 转换表达式为计算的值
+    convertCalc (expression) {
+      switch (expression.type) {
+        case `bitwise`:
+          const bitwiseMap = {
+            'Or': `|`,
+            'Xor': `^`,
+            'Not': `~`,
+            'And': `&`
+          }
+          return bitwiseMap[expression.value]
+        case `mod`:
+          return `%`
+        case `arithmetic`:
+          const arithmeticMap = {
+            '+': `+`,
+            '-': `-`,
+            '×': `*`,
+            '÷': `/`
+          }
+          return arithmeticMap[expression.value]
+        case `value`:
+          return `0B${expression.value}`
+        default:  // 目前包括括号
+          return expression.value
+      }
     },
 
     // 判断键位禁用状态
@@ -488,6 +533,7 @@ export default {
   .key-item {
     width: 100%;
     height: 60px;
+    position: relative;
     background-color: #f0f0f0;
     border: none;
     font-size: 13px;
@@ -536,6 +582,13 @@ export default {
       background-color: #409eff;
       color: #fff;
     }
+  }
+  .extra-left-bracket {
+    position: absolute;
+    top: 28px;
+    left: calc(50% + 5px);
+    font-size: 13px;
+    font-weight: bold;
   }
 }
 </style>
