@@ -10,6 +10,11 @@ export const convertSystem = (oldVlalue, from, to) => {
   return newValue
 }
 
+// 二进制取反加一
+export const inversePlusOne = (value) => {
+  return eval(`(0b${value.map(bit => bit === `1` ? `0` : `1`).join('')} +0b1)`)
+}
+
 // 判断是否为负数
 export const isNegative = value => {
   return value.charAt(0) === `-`

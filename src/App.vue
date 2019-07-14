@@ -39,8 +39,8 @@
         <span class="function-item" title="内存存储">MS</span>
       </p>
 
-      <keyboard v-if="showAllKeyboard"></keyboard>
-      <bit v-else></bit>
+      <keyboard v-show="showAllKeyboard"></keyboard>
+      <bit v-show="!showAllKeyboard"></bit>
     </div>
     <memory></memory>
   </div>

@@ -28,7 +28,7 @@
 <script>
 import { mapState, mapGetters } from 'vuex'
 import { SYSTEM } from '@/utils/enum'
-import { convertSystem, isNegative, absValue } from '@/utils'
+import { convertSystem, inversePlusOne, isNegative, absValue } from '@/utils'
 
 export default {
   name: 'Keyboard',
@@ -280,6 +280,14 @@ export default {
       } else {
         return false
       }
+    },
+
+    maxValue () {
+      return Math.pow(2, this.bitLengthCount - 1) - 1
+    },
+
+    minValue () {
+      return -Math.pow(2, this.bitLengthCount - 1)
     }
   },
 
@@ -400,10 +408,8 @@ export default {
       let systemValue =
         this.systemValue === `0` ? value : this.systemValue.concat(value)
       // 判断是否超出位数
-      const max = Math.pow(2, this.bitLengthCount - 1) -1
-      const min = -Math.pow(2, this.bitLengthCount - 1)
       const decValue = convertSystem(systemValue, SYSTEM[this.systemType], SYSTEM[`dec`])
-      if (decValue > max || decValue < min) return
+      if (decValue > this.maxValue || decValue < this.minValue) return
       this.setBinValue(systemValue, SYSTEM[this.systemType])
     },
 
@@ -558,7 +564,7 @@ export default {
       // 处理负数
       if (length === this.bitLengthCount && binValue.charAt(0) === `1`) {
         // 舍去符号位，按位取反再加1，求出十进制对应的正值，再加上‘-’号存储
-        binValue = eval(`-(0b${binValue.slice(1, length).split('').map(bit => bit === `1` ? `0` : `1`).join('')} + 0b1)`).toString(SYSTEM[`bin`])
+        binValue = (-inversePlusOne(absValue(binValue).split(''))).toString(SYSTEM[`bin`])
       }
       return binValue
     },
@@ -581,9 +587,9 @@ export default {
     position: relative;
     background-color: #f0f0f0;
     border: none;
+    outline: none;
     font-size: 13px;
     text-align: center;
-    outline: none;
     cursor: pointer;
     &:hover {
       background-color: #dbdbdb;
