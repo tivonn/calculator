@@ -28,14 +28,14 @@
 <script>
 import { mapState, mapGetters } from 'vuex'
 import { SYSTEM } from '@/utils/enum'
-import { convertSystem } from '@/utils'
+import { convertSystem, isNegative, absValue } from '@/utils'
 
 export default {
   name: 'Keyboard',
 
   data () {
     return {
-      keys: [
+      keys: [ // 键位
         {
           type: `Lsh`,  // 类型
           class: [],  // 类名
@@ -382,7 +382,7 @@ export default {
       // 将systemValue退格1位后，转化成二进制存储
       let systemValue =
         length > 1 ? this.systemValue.slice(0, length - 1) : `0`
-      this.setBinValue(systemValue)
+      this.setBinValue(systemValue, SYSTEM[this.systemType])
     },
 
     // 加减乘除
@@ -398,7 +398,7 @@ export default {
       // 将systemValue拼接输入的值后，转化为二进制存储
       let systemValue =
         this.systemValue === `0` ? value : this.systemValue.concat(value)
-      this.setBinValue(systemValue)
+      this.setBinValue(systemValue, SYSTEM[this.systemType])
     },
 
     // 左括号
@@ -423,11 +423,11 @@ export default {
 
     // 切换正负
     switchSign () {
-      let isNegative = this.systemValue.charAt(0) === `-`
-      // 将systemValue退格1位后，转化成二进制存储
-      let systemValue =
-        isNegative ? this.systemValue.slice(1, this.systemValue.length) : `-`.concat(this.systemValue)
-      this.setBinValue(systemValue)
+      // 0不分正负
+      if (this.binValue === `0`) return
+      // 修改systemValue的符号，转化成二进制存储
+      let systemValue = isNegative(this.systemValue) ? this.systemValue.slice(1, this.systemValue.length) : `-`.concat(this.systemValue)
+      this.setBinValue(systemValue, SYSTEM[this.systemType])
     },
 
     // 小数点，目前程序员模式不支持，暂时定义空函数
@@ -467,10 +467,10 @@ export default {
     },
 
     // 更新当前二进制
-    setBinValue (systemValue) {
+    setBinValue (systemValue, systemType) {
       this.$store.commit(
         'setBinValue',
-        convertSystem(systemValue, SYSTEM[this.systemType], SYSTEM[`bin`])
+        convertSystem(systemValue, systemType, SYSTEM[`bin`])
       )
     },
 
@@ -499,22 +499,20 @@ export default {
       }
       let expressions = this.expressions.map(expression => this.convertCalc(expression)).join(``)
       let result = eval(expressions)
-      this.$store.commit(
-        'setBinValue',
-        convertSystem(result, SYSTEM[`dec`], SYSTEM[`bin`])
-      )
+      this.setBinValue(result, SYSTEM[`dec`])
       this.clearExpressions()
     },
 
     // 转换表达式为计算的值
     convertCalc (expression) {
+      let value = expression.value
       switch (expression.type) {
         case `move`:
           const moveMap = {
             'Lsh': `<<`,
             'Rsh': `>>`
           }
-          return moveMap[expression.value]
+          return moveMap[value]
         case `bitwise`:
           const bitwiseMap = {
             'Or': `|`,
@@ -522,7 +520,7 @@ export default {
             'Not': `~`,
             'And': `&`
           }
-          return bitwiseMap[expression.value]
+          return bitwiseMap[value]
         case `mod`:
           return `%`
         case `arithmetic`:
@@ -532,11 +530,11 @@ export default {
             '×': `*`,
             '÷': `/`
           }
-          return arithmeticMap[expression.value]
+          return arithmeticMap[value]
         case `value`:
-          return `0B${expression.value}`
-        default:  // 目前包括括号
-          return expression.value
+          return `${isNegative(value) ? `-` : ``}0B${absValue(value)}`
+        default:  // 目前只有括号模式符合
+          return value
       }
     },
 

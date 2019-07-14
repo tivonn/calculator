@@ -20,7 +20,7 @@
 <script>
 import { mapState, mapGetters } from 'vuex'
 import { SYSTEM } from '@/utils/enum'
-import { convertSystem } from '@/utils'
+import { convertSystem, isNegative } from '@/utils'
 
 export default {
   name: 'Result',
@@ -45,8 +45,20 @@ export default {
     systems () {
       let systems = {}
       for (let system in SYSTEM) {
+        let count = convertSystem(this.binValue, SYSTEM[`bin`], SYSTEM[system])
+        // 二进制需要4位一组
+        if (system === `bin`) {
+          // 判断是否为正数
+          if (!isNegative(count) && count !== `0`) {
+            // 二进制时，按照4位一组补全
+            let modCount = count.length % 4
+            if (modCount !== 0) {
+              count = `0`.repeat(4 - modCount).concat(count)
+            }
+          }
+        }
         systems[system] = {
-          count: convertSystem(this.binValue, SYSTEM[`bin`], SYSTEM[system])
+          count
         }
       }
       return systems

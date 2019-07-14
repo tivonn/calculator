@@ -1,5 +1,5 @@
 <template>
-  <div class="memory-view">
+  <div class="memory-container">
     内存
   </div>
 </template>
@@ -11,7 +11,7 @@ export default {
 </script>
 
 <style lang="scss">
-.memory-view {
+.memory-container {
   width: 400px;
   float: left;
   padding-top: 10px;

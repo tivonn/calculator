@@ -9,7 +9,8 @@ export default new Vuex.Store({
   state: {
     expressions: [], // 计算表达式
     binValue: `0`, // 当前值的二进制
-    systemType: `dec` // 进制类型
+    systemType: `dec`, // 进制类型
+    bitLength: {}  // 字长
   },
 
   getters: {
@@ -20,6 +21,11 @@ export default new Vuex.Store({
         SYSTEM[`bin`],
         SYSTEM[state.systemType]
       )
+    },
+
+    // 字长对应位数
+    bitLengthCount: state => {
+      return state.bitLength.count
     }
   },
 
@@ -34,6 +40,10 @@ export default new Vuex.Store({
 
     setSystemType (state, value) {
       state.systemType = value
+    },
+
+    setBitLength (state, value) {
+      state.bitLength = value
     }
   }
 })

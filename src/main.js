@@ -3,6 +3,7 @@ import App from '@/App.vue'
 import store from '@/store'
 import 'normalize.css'
 import '@/assets/css/common.scss'
+import '@/assets/iconfont/iconfont.js'
 
 Vue.config.productionTip = false
 
