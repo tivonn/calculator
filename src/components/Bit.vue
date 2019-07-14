@@ -19,7 +19,7 @@
 
 <script>
 import { mapState, mapGetters } from 'vuex'
-import { WORD_LENGTH } from '@/utils/enum'
+import { SYSTEM, BIT_LENGTH } from '@/utils/enum'
 import { isNegative, absValue } from '@/utils'
 
 export default {
@@ -39,7 +39,19 @@ export default {
 
     ...mapGetters([
       'bitLengthCount'
-    ])
+    ]),
+
+    signPosition () {
+      return this.totalLength - this.bitLengthCount
+    },
+
+    byteSignPosition () {
+      return this.totalLength - BIT_LENGTH[`BYTE`]
+    },
+
+    isNegative () {
+      return this.showBinValue[this.signPosition] === `1`
+    }
   },
 
   mounted () {
@@ -48,11 +60,11 @@ export default {
 
   watch: {
     bitLengthCount (newValue) {
-      let signPosition = this.totalLength - WORD_LENGTH[`BYTE`]
-      if (newValue === WORD_LENGTH[`QWORD`] && this.showBinValue[signPosition] === `1`) {  // 代表原本符号位为负，且由BYTE变为QWORD，将前面的位统一设置为1
-          this.showBinValue.splice(0, signPosition, ...new Array(signPosition).fill(`1`))
+      if (newValue === BIT_LENGTH[`QWORD`] && this.showBinValue[this.byteSignPosition] === `1`) {  // 代表原本符号位为负，且由BYTE变为QWORD，将前面的位统一设置为1
+        this.showBinValue.splice(0, this.byteSignPosition, ...new Array(this.byteSignPosition).fill(`1`))
       } else {
-        this.setLength()
+        // 将禁用的位统一设置为0
+        this.updatePrefixBit(0)
         this.setBinValue()
       }
     }
@@ -60,11 +72,11 @@ export default {
 
   methods: {
     init () {
-      this.setLength()
+      this.setPrefixBit()
     },
 
     // 计算位数
-    setLength () {
+    setPrefixBit () {
       // todo
       if (!isNegative(this.binValue)) { // 非负数
         let extraBitlength = this.bitLengthCount - this.binValue.length
@@ -75,8 +87,10 @@ export default {
           this.showBinValue = `0`.repeat(this.totalLength - sliceValue.length).concat(sliceValue).split('')
         }
       }
-      console.log(this.showBinValue)
-      console.log(this.showBinValue.length)
+    },
+
+    updatePrefixBit (value) {
+      this.showBinValue.splice(0, this.signPosition, ...new Array(this.signPosition).fill(value))
     },
 
     // 切换0、1
@@ -87,9 +101,12 @@ export default {
 
     // 更新binValue
     setBinValue () {
-      let binValue = this.showBinValue.join('')
-      // todo 
-      if (binValue.charAt(0) === `0`) {  // 非负数
+      if (!this.isNegative) {  // 非负数
+        let binValue = this.showBinValue.join('')
+        this.$store.commit('setBinValue', binValue)
+      } else {
+        // 按位取反再加1，求出十进制对应的正值，再加上‘-’号存储
+        let binValue = eval(`-(0b${this.showBinValue.slice(this.signPosition, this.totalLength).map(bit => bit === `1` ? `0` : `1`).join('')} + 0b1)`).toString(SYSTEM[`bin`])
         this.$store.commit('setBinValue', binValue)
       }
     },

@@ -52,7 +52,7 @@ import Keyboard from '@/components/Keyboard'
 import Bit from '@/components/Bit'
 import Memory from '@/components/Memory'
 import { mapState } from 'vuex'
-import { WORD_LENGTH } from '@/utils/enum'
+import { BIT_LENGTH } from '@/utils/enum'
 
 export default {
   name: 'app',
@@ -63,22 +63,22 @@ export default {
       bitLengthOptions: { // 此处需要循环切换，采用类似链表指针的思想，next记录要切换的下一项。如果使用数组存储options，在切换时还需判断index是否超出。
         'QWORD': {
           type: `QWORD`,
-          count: WORD_LENGTH[`QWORD`],
+          count: BIT_LENGTH[`QWORD`],
           next: `DWORD`
         },
         'DWORD': {
           type: `DWORD`,
-          count: WORD_LENGTH[`DWORD`],
+          count: BIT_LENGTH[`DWORD`],
           next: `WORD`
         },
         'WORD': {
           type: `WORD`,
-          count: WORD_LENGTH[`WORD`],
+          count: BIT_LENGTH[`WORD`],
           next: `BYTE`
         },
         'BYTE': {
           type: `BYTE`,
-          count: WORD_LENGTH[`BYTE`],
+          count: BIT_LENGTH[`BYTE`],
           next: `QWORD`
         }
       }

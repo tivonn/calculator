@@ -266,7 +266,8 @@ export default {
     ]),
 
     ...mapGetters([
-      'systemValue'
+      'systemValue',
+      'bitLengthCount'
     ]),
 
     // 判断符号是否可以直接替换
@@ -398,6 +399,11 @@ export default {
       // 将systemValue拼接输入的值后，转化为二进制存储
       let systemValue =
         this.systemValue === `0` ? value : this.systemValue.concat(value)
+      // 判断是否超出位数
+      const max = Math.pow(2, this.bitLengthCount - 1) -1
+      const min = -Math.pow(2, this.bitLengthCount - 1)
+      const decValue = convertSystem(systemValue, SYSTEM[this.systemType], SYSTEM[`dec`])
+      if (decValue > max || decValue < min) return
       this.setBinValue(systemValue, SYSTEM[this.systemType])
     },
 
@@ -498,8 +504,10 @@ export default {
         this.extraLeftBracket--
       }
       let expressions = this.expressions.map(expression => this.convertCalc(expression)).join(``)
-      let result = eval(expressions)
-      this.setBinValue(result, SYSTEM[`dec`])
+      this.$store.commit(
+        'setBinValue',
+        this.handleResult(eval(expressions))
+      )
       this.clearExpressions()
     },
 
@@ -536,6 +544,23 @@ export default {
         default:  // 目前只有括号模式符合
           return value
       }
+    },
+
+    // 判断是否溢出
+    handleResult (result) {
+      let binValue = result.toString(SYSTEM[`bin`])
+      let length = binValue.length
+      // 获取对应的位数
+      if (length > this.bitLengthCount) {
+        binValue = binValue.slice(-this.bitLengthCount, length)
+      }
+      length = binValue.length
+      // 处理负数
+      if (length === this.bitLengthCount && binValue.charAt(0) === `1`) {
+        // 舍去符号位，按位取反再加1，求出十进制对应的正值，再加上‘-’号存储
+        binValue = eval(`-(0b${binValue.slice(1, length).split('').map(bit => bit === `1` ? `0` : `1`).join('')} + 0b1)`).toString(SYSTEM[`bin`])
+      }
+      return binValue
     },
 
     // 判断键位禁用状态

@@ -5,7 +5,7 @@ export const SYSTEM = {
   'bin': 2
 }
 
-export const WORD_LENGTH = {
+export const BIT_LENGTH = {
   'QWORD': 64,
   'DWORD': 32,
   'WORD': 16,
