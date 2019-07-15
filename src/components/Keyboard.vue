@@ -9,7 +9,7 @@
       >
         <button
           class="key-item"
-          :class="key.class"
+          :class="`${key.class} ${keyClass(key)}`"
           :disabled="isDisabled(key.disableds)"
           @click="key.callback(key.type)"
         >
@@ -28,7 +28,7 @@
 <script>
 import { mapState, mapGetters } from 'vuex'
 import { SYSTEM } from '@/utils/enum'
-import { convertSystem, inversePlusOne, isNegative, absValue } from '@/utils'
+import { convertSystem, inversePlusOne, concat0B, isNegative, absValue } from '@/utils'
 
 export default {
   name: 'Keyboard',
@@ -352,17 +352,6 @@ export default {
           }
         ]
       this.keys.splice(0, 2, ...moveKeys)
-      // todo 看是否能直接绑定在html，动态渲染
-      // 修改切换进制键active状态
-      let switchMoveKey = this.keys.find(key => key.type === `↑`)
-      if (this.isLogicalMove) {
-        switchMoveKey.class.push(`active`)
-      } else {
-        let index = switchMoveKey.class.findIndex(
-          className => className === `active`
-        )
-        switchMoveKey.class.splice(index, 1)
-      }
     },
 
     // 取模
@@ -546,7 +535,7 @@ export default {
           }
           return arithmeticMap[value]
         case `value`:
-          return `${isNegative(value) ? `-` : ``}0B${absValue(value)}`
+          return concat0B(value)
         default:  // 目前只有括号模式符合
           return value
       }
@@ -572,6 +561,12 @@ export default {
     // 判断键位禁用状态
     isDisabled (disableds) {
       return disableds.some(systemType => systemType === this.systemType)
+    },
+
+    keyClass (key) {
+      const switchMove = key.type === `↑` && this.isLogicalMove? 'active': ''
+      const classList = [switchMove]
+      return classList
     }
   }
 }

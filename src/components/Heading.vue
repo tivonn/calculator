@@ -1,0 +1,28 @@
+<template>
+  <div class="heading-container">
+    <span title="打开导航">
+      <svg class="iconfont">
+        <use xlink:href="#icon-caidanlan"></use>
+      </svg>
+    </span>
+    <span class="calculator-mode">程序员</span>
+  </div>
+</template>
+
+<script>
+export default {
+  name: 'Heading'
+}
+</script>
+
+<style lang='scss'>
+.heading-container {
+  height: 45px;
+  padding-left: 10px;
+  line-height: 45px;
+  .calculator-mode {
+    margin-left: 10px;
+    font-size: 20px;
+  }
+}
+</style>

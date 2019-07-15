@@ -111,7 +111,9 @@ export default {
   }
   .memory-value {
   	height: 60px;
-  	line-height: 60px;
+    line-height: 60px;
+    font-size: 22px;
+    font-weight: bold;
   }
   .operation-item {
   	width: 50px;
@@ -119,8 +121,10 @@ export default {
   	display: inline-block;
   	margin-left: 20px;
   	line-height: 36px;
-  	border: 1px solid #e6e6e6;
-  	text-align: center;
+    border: 2px solid #e6e6e6;
+    font-size: 14px;
+    text-align: center;
+    font-weight: bold;
   }
   .reset-memory {
     width: 40px;
@@ -130,7 +134,7 @@ export default {
     right: 0;
     bottom: 0;
     line-height: 40px;
-    border: 2px solid #e6e6e6;
+    border: 3px solid #e6e6e6;
     text-align: center;
     cursor: pointer;
     &:hover {

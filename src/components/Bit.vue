@@ -59,10 +59,12 @@ export default {
   },
 
   watch: {
+    // 输入值
     binValue () {
       this.init()
     },
 
+    // 切换进制
     bitLengthCount (newValue) {
       if (newValue === BIT_LENGTH[`QWORD`] && this.showBinValue[this.byteSignPosition] === `1`) {  // 代表原本符号位为负，且由BYTE变为QWORD，将前面的位统一设置为1
         this.showBinValue.splice(0, this.byteSignPosition, ...new Array(this.byteSignPosition).fill(`1`))

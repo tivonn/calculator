@@ -1,4 +1,5 @@
 @import '~@/assets/css/mixin.scss';
+@include scrollbar();
 
 * {
   margin: 0;
@@ -13,11 +14,10 @@ body {
   height: 100%;
 }
 
-ul, li {
+ul,
+li {
   list-style: none;
 }
-
-@include scrollbar
 
 .iconfont {
   width: 1em;
