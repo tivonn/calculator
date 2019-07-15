@@ -10,7 +10,8 @@ export default new Vuex.Store({
     expressions: [], // 计算表达式
     binValue: `0`, // 当前值的二进制
     systemType: `dec`, // 进制类型
-    bitLength: {}  // 字长
+    bitLength: {},  // 字长
+    memories: []  // 内存记录
   },
 
   getters: {
@@ -44,6 +45,16 @@ export default new Vuex.Store({
 
     setBitLength (state, value) {
       state.bitLength = value
+    },
+
+    setMemories (state, value) {
+      state.memories = value
+    },
+
+    updateMemory (state, value) {
+      let { id, newValue } = value
+      let memory = state.memories.find(memory => memory.id === id)
+      this._vm.$set(memory, 'value', newValue)
     }
   }
 })

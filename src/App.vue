@@ -36,13 +36,13 @@
           @click="switchBitLength"
           >{{ bitLength.type }}</span
         >
-        <span class="function-item" title="内存存储">MS</span>
+        <span class="function-item" title="内存存储" @click="ms">MS</span>
       </p>
 
       <keyboard v-show="showAllKeyboard"></keyboard>
       <bit v-show="!showAllKeyboard"></bit>
     </div>
-    <memory></memory>
+    <memory ref="memory"></memory>
   </div>
 </template>
 
@@ -98,6 +98,10 @@ export default {
   methods: {
     switchBitLength () {
       this.$store.commit('setBitLength', this.bitLengthOptions[this.bitLength.next])
+    },
+
+    ms () {
+      this.$refs.memory.addMemory()
     }
   },
 
@@ -115,7 +119,7 @@ export default {
   width: 100%;
   height: 100%;
   background-color: #e6e6e6;
-  font-family: "Avenir", Helvetica, Arial, sans-serif;
+  font-family: PingFangSC, 微软雅黑, Helvetica, Arial, sans-serif;
   .calculator-container {
     width: calc(100% - 400px);
     float: left;
