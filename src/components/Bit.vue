@@ -20,7 +20,7 @@
 <script>
 import { mapState, mapGetters } from 'vuex'
 import { SYSTEM, BIT_LENGTH } from '@/utils/enum'
-import { convertSystem, inversePlusOne, isNegative, absValue } from '@/utils'
+import { convertSystem, setPrefixBit, deletePrefixZero, inversePlusOne, isNegative, absValue } from '@/utils'
 
 export default {
   name: 'Bit',
@@ -67,10 +67,10 @@ export default {
     // 切换进制
     bitLengthCount (newValue) {
       if (newValue === BIT_LENGTH[`QWORD`] && this.showBinValue[this.byteSignPosition] === `1`) {  // 代表原本符号位为负，且由BYTE变为QWORD，将前面的位统一设置为1
-        this.showBinValue.splice(0, this.byteSignPosition, ...new Array(this.byteSignPosition).fill(`1`))
+         this.updatePrefixBit(`1`, this.byteSignPosition)
       } else {
         // 将禁用的位统一设置为0
-        this.updatePrefixBit(0)
+        this.updatePrefixBit(`0`, this.signPosition)
       }
       this.setBinValue()
     }
@@ -83,22 +83,12 @@ export default {
 
     // 设置前缀
     setPrefixBit () {
-      if (!isNegative(this.binValue)) {
-        // 非负数直接补0
-        this.showBinValue = `0`.repeat(this.totalLength - this.binValue.length).concat(this.binValue).split('')
-      } else {
-        // 负数需要前缀全部为1，取反加1
-        let positiveValue = absValue(this.binValue)
-        let length = positiveValue.length
-        let value = convertSystem(inversePlusOne(positiveValue.split('')), SYSTEM[`dec`], SYSTEM[`bin`])
-        value = `0`.repeat(length - value.length).concat(value)
-        this.showBinValue = `1`.repeat(this.totalLength - value.length).concat(value).split('')
-      }
+      this.showBinValue = setPrefixBit(this.binValue, this.totalLength).split(``)
     },
 
     // 更新前缀，用于切换进制时
-    updatePrefixBit (value) {
-      this.showBinValue.splice(0, this.signPosition, ...new Array(this.signPosition).fill(value))
+    updatePrefixBit (value, position) {
+      this.showBinValue.splice(0, position, ...new Array(position).fill(value))
     },
 
     // 切换0、1
@@ -110,11 +100,12 @@ export default {
     // 更新binValue
     setBinValue () {
       if (!this.isNegative) {  // 非负数
-        let binValue = this.showBinValue.join('')
+        // 去除前面多余的0再存储
+        let binValue = deletePrefixZero(this.showBinValue.join(''))
         this.$store.commit('setBinValue', binValue)
       } else {
         // 按位取反再加1，求出十进制对应的正值，再加上‘-’号存储
-        let binValue = (-inversePlusOne(this.showBinValue.slice(this.signPosition, this.totalLength))).toString(SYSTEM[`bin`])
+        let binValue = inversePlusOne(this.showBinValue.slice(this.signPosition, this.totalLength), true)
         this.$store.commit('setBinValue', binValue)
       }
     },

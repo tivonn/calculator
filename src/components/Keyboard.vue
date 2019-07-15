@@ -28,7 +28,7 @@
 <script>
 import { mapState, mapGetters } from 'vuex'
 import { SYSTEM } from '@/utils/enum'
-import { convertSystem, inversePlusOne, concat0B, isNegative, absValue } from '@/utils'
+import { convertSystem, setPrefixBit, deletePrefixZero, inversePlusOne, concat0B, isNegative, absValue } from '@/utils'
 
 export default {
   name: 'Keyboard',
@@ -253,7 +253,7 @@ export default {
           callback: this.keyEqual
         }
       ],
-      isLogicalMove: false, // 是否逻辑位移,
+      isRotateMove: false, // 是否循环位移,
       extraLeftBracket: 0 // 左括号比右括号多的数量
     }
   },
@@ -293,18 +293,32 @@ export default {
 
   methods: {
     // 左移右移
-    keyMove (type) {
+    keyMove (direction) {
       this.handleExpression({
         type: `move`,
-        value: type
+        value: direction
       })
     },
 
-    // 逻辑左移
-    keyLogicalLeftMove () { },
-
-    // 逻辑右移
-    keyLogicalRightMove () { },
+    // 循环左移右移
+    keyRotateMove (direction) {
+      // 先补全位数
+      let completeValue = setPrefixBit(this.binValue, this.bitLengthCount)
+      let newValue
+      if (direction === `RoL`) {  // 循环左移
+        newValue = completeValue.slice(1, completeValue.length).concat(completeValue.slice(0, 1))
+      } else if (direction === `RoR`) {
+        newValue = completeValue.slice(completeValue.length - 1, completeValue.length).concat(completeValue.slice(0, completeValue.length - 1))
+      }
+      if (newValue.slice(0, 1) === `0`) {
+        // 正数去除前面多余的0后存储
+        this.$store.commit('setBinValue', deletePrefixZero(newValue))
+      } else {
+        // 负数去除第一位的1，取反加1，求出十进制对应的正值，加上-号存储
+        this.$store.commit('setBinValue', inversePlusOne(newValue.slice(1, newValue.length).split(''), true))
+      }
+      console.log(newValue)
+    },
 
     // 按位运算
     keyBitwise (type) {
@@ -321,20 +335,20 @@ export default {
 
     // 切换（循环）位移
     switchMoveType () {
-      this.isLogicalMove = !this.isLogicalMove
-      let moveKeys = this.isLogicalMove
+      this.isRotateMove = !this.isRotateMove
+      let moveKeys = this.isRotateMove
         ? [
           {
             type: `RoL`,
             class: ``,
             disableds: [],
-            callback: this.keyLogicalLeftMove
+            callback: this.keyRotateMove
           },
           {
             type: `RoR`,
             class: ``,
             disableds: [],
-            callback: this.keyLogicalRightMove
+            callback: this.keyRotateMove
           }
         ]
         : [
@@ -553,7 +567,7 @@ export default {
       // 处理负数
       if (length === this.bitLengthCount && binValue.charAt(0) === `1`) {
         // 舍去符号位，按位取反再加1，求出十进制对应的正值，再加上‘-’号存储
-        binValue = (-inversePlusOne(absValue(binValue).split(''))).toString(SYSTEM[`bin`])
+        binValue = inversePlusOne(absValue(binValue).split(''), true)
       }
       return binValue
     },
@@ -564,7 +578,7 @@ export default {
     },
 
     keyClass (key) {
-      const switchMove = key.type === `↑` && this.isLogicalMove? 'active': ''
+      const switchMove = key.type === `↑` && this.isRotateMove ? 'active' : ''
       const classList = [switchMove]
       return classList
     }
