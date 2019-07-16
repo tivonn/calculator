@@ -49,216 +49,284 @@ export default {
           type: `Lsh`,  // 类型
           class: [],  // 类名
           disableds: [],  // 禁用状态对应的进制
+          canKeyIn: true, // 是否支持键盘输入
+          keyValue: `<`,  //  键盘输入对应的键位
           callback: this.keyMove  // 点击回调
         },
         {
           type: `Rsh`,
           class: [],
           disableds: [],
+          canKeyIn: true,
+          keyValue: `>`,
           callback: this.keyMove
         },
         {
           type: `Or`,
           class: [],
           disableds: [],
+          canKeyIn: true,
+          keyValue: `|`,
           callback: this.keyBitwise
         },
         {
           type: `Xor`,
           class: [],
           disableds: [],
+          canKeyIn: true,
+          keyValue: `^`,
           callback: this.keyBitwise
         },
         {
           type: `Not`,
           class: [],
           disableds: [],
+          canKeyIn: true,
+          keyValue: `~`,
           callback: this.keyBitwise
         },
         {
           type: `And`,
           class: [],
           disableds: [],
+          canKeyIn: true,
+          keyValue: `&`,
           callback: this.keyBitwise
         },
         {
           type: `↑`,
           class: [`key-switch-move`],
           disableds: [],
+          canKeyIn: false,
           callback: this.switchMoveType
         },
         {
           type: `Mod`,
           class: [],
           disableds: [],
+          canKeyIn: true,
+          keyValue: `%`,
           callback: this.keyMod
         },
         {
           type: `CE`,
           class: [`key-ce`],
           disableds: [],
+          canKeyIn: true,
+          keyValue: `del`,
           callback: this.keyCe
         },
         {
           type: `Ｃ`,
           class: [`key-reset`],
           disableds: [],
+          canKeyIn: false,
           callback: this.keyReset
         },
         {
           type: `←`,
           class: [`key-backspace`],
           disableds: [],
+          canKeyIn: true,
+          keyValue: `backspace`,
           callback: this.keyBackspace
         },
         {
           type: `÷`,
           class: [`key-arithmetic`],
           disableds: [],
+          canKeyIn: true,
+          keyValue: `/`,
           callback: this.keyArithmetic
         },
         {
           type: `A`,
           class: [`key-letter`],
           disableds: [`dec`, `oct`, `bin`],
+          canKeyIn: true,
+          keyValue: `A`,
           callback: this.keyValue
         },
         {
           type: `B`,
           class: [`key-letter`],
           disableds: [`dec`, `oct`, `bin`],
+          canKeyIn: true,
+          keyValue: `B`,
           callback: this.keyValue
         },
         {
           type: `7`,
           class: [`key-number`],
           disableds: [`bin`],
+          canKeyIn: true,
+          keyValue: `7`,
           callback: this.keyValue
         },
         {
           type: `8`,
           class: [`key-number`],
           disableds: [`oct`, `bin`],
+          canKeyIn: true,
+          keyValue: `8`,
           callback: this.keyValue
         },
         {
           type: `9`,
           class: [`key-number`],
           disableds: [`oct`, `bin`],
+          canKeyIn: true,
+          keyValue: `9`,
           callback: this.keyValue
         },
         {
           type: `×`,
           class: [`key-arithmetic`],
           disableds: [],
+          canKeyIn: true,
+          keyValue: `*`,
           callback: this.keyArithmetic
         },
         {
           type: `C`,
           class: [`key-letter`],
           disableds: [`dec`, `oct`, `bin`],
+          canKeyIn: true,
+          keyValue: `C`,
           callback: this.keyValue
         },
         {
           type: `D`,
           class: [`key-letter`],
           disableds: [`dec`, `oct`, `bin`],
+          canKeyIn: true,
+          keyValue: `D`,
           callback: this.keyValue
         },
         {
           type: `4`,
           class: [`key-number`],
           disableds: [`bin`],
+          canKeyIn: true,
+          keyValue: `4`,
           callback: this.keyValue
         },
         {
           type: `5`,
           class: [`key-number`],
           disableds: [`bin`],
+          canKeyIn: true,
+          keyValue: `5`,
           callback: this.keyValue
         },
         {
           type: `6`,
           class: [`key-number`],
           disableds: [`bin`],
+          canKeyIn: true,
+          keyValue: `6`,
           callback: this.keyValue
         },
         {
           type: `-`,
           class: [`key-arithmetic`],
           disableds: [],
+          canKeyIn: true,
+          keyValue: `-`,
           callback: this.keyArithmetic
         },
         {
           type: `E`,
           class: [`key-letter`],
           disableds: [`dec`, `oct`, `bin`],
+          canKeyIn: true,
+          keyValue: `E`,
           callback: this.keyValue
         },
         {
           type: `F`,
           class: [`key-letter`],
           disableds: [`dec`, `oct`, `bin`],
+          canKeyIn: true,
+          keyValue: `F`,
           callback: this.keyValue
         },
         {
           type: `1`,
           class: [`key-number`],
           disableds: [],
+          canKeyIn: true,
+          keyValue: `1`,
           callback: this.keyValue
         },
         {
           type: `2`,
           class: [`key-number`],
           disableds: [`bin`],
+          canKeyIn: true,
+          keyValue: `2`,
           callback: this.keyValue
         },
         {
           type: `3`,
           class: [`key-number`],
           disableds: [`bin`],
+          canKeyIn: true,
+          keyValue: `3`,
           callback: this.keyValue
         },
         {
           type: `+`,
           class: [`key-arithmetic`],
           disableds: [],
+          canKeyIn: true,
+          keyValue: `+`,
           callback: this.keyArithmetic
         },
         {
           type: `(`,
           class: [`key-bracket`],
           disableds: [],
+          canKeyIn: true,
+          keyValue: `(`,
           callback: this.keyLeftBracket
         },
         {
           type: `)`,
           class: [`key-bracket`],
           disableds: [],
+          canKeyIn: true,
+          keyValue: `)`,
           callback: this.keyRightBracket
         },
         {
           type: `±`,
           class: [`key-switch-sign`],
           disableds: [],
+          canKeyIn: false,
           callback: this.switchSign
         },
         {
           type: `0`,
           class: [`key-number`],
           disableds: [],
+          canKeyIn: true,
+          keyValue: `0`,
           callback: this.keyValue
         },
         {
           type: `.`,
           class: [`key-dot`],
           disableds: [`hex`, `dec`, `oct`, `bin`],
+          canKeyIn: false,
           callback: this.keyDot
         },
         {
           type: `=`,
           class: [`key-arithmetic`],
           disableds: [],
+          canKeyIn: true,
+          keyValue: `enter`,
           callback: this.keyEqual
         }
       ],
@@ -291,10 +359,12 @@ export default {
       }
     },
 
+    // 当前位数可以输入的最大值
     maxValue () {
       return Math.pow(2, this.bitLengthCount - 1) - 1
     },
 
+    // 当前位数可以输入的最小值
     minValue () {
       return -Math.pow(2, this.bitLengthCount - 1)
     }
@@ -321,110 +391,13 @@ export default {
 
     // 键盘监听
     initMousetrap () {
-      // todo ce、backspace
-      const mousetrapMap = {
-        '0': {
-          value: `0`,
-          callback: this.keyValue
-        },
-        '1': {
-          value: `1`,
-          callback: this.keyValue
-        },
-        '2': {
-          value: `2`,
-          callback: this.keyValue
-        },
-        '3': {
-          value: `3`,
-          callback: this.keyValue
-        },
-        '4': {
-          value: `4`,
-          callback: this.keyValue
-        },
-        '5': {
-          value: `5`,
-          callback: this.keyValue
-        },
-        '6': {
-          value: `6`,
-          callback: this.keyValue
-        },
-        '7': {
-          value: `7`,
-          callback: this.keyValue
-        },
-        '8': {
-          value: `8`,
-          callback: this.keyValue
-        },
-        '9': {
-          value: `9`,
-          callback: this.keyValue
-        },
-        '+': {
-          value: `+`,
-          callback: this.keyArithmetic
-        }, 
-        '-': {
-          value: `-`,
-          callback: this.keyArithmetic
-        },
-        '*': {
-          value: `×`,
-          callback: this.keyArithmetic
-        },
-        '/': {
-          value: `÷`,
-          callback: this.keyArithmetic
-        },
-        '(': {
-          value: ``,
-          callback: this.keyLeftBracket
-        },
-        ')': {
-          value: ``,
-          callback: this.keyRightBracket
-        },
-        '<': {
-          value: `Lsh`,
-          callback: this.keyMove
-        },
-        '>': {
-          value: `Rsh`,
-          callback: this.keyMove
-        },
-        '|': {
-          value: `Or`,
-          callback: this.keyBitwise
-        },
-        '^': {
-          value: `Xor`,
-          callback: this.keyBitwise
-        },
-        '~': {
-          value: `Not`,
-          callback: this.keyBitwise
-        },
-        '&': {
-          value: `And`,
-          callback: this.keyBitwise
-        },
-        '%': {
-          value: ``,
-          callback: this.keyMod
-        },
-        'enter': {
-          value: `Rsh`,
-          callback: this.keyEqual
+      for (let key of this.keys) {
+        if (key.canKeyIn) {
+          Mousetrap.bind(key.keyValue, () => {
+            if (key.disableds.some(disabled => disabled === this.systemType)) return
+            key.callback(key.type)
+          })
         }
-      }
-      for (let key in mousetrapMap) {
-        let mousetrap = mousetrapMap[key]
-        Mousetrap.bind(key, () => {
-          mousetrap.callback(mousetrap.value)
-        }) 
       }
     },
 
@@ -457,7 +430,6 @@ export default {
         // 负数去除第一位的1，取反加1，求出十进制对应的正值，加上-号存储
         this.$store.commit('setBinValue', inversePlusOne(newValue.slice(1, newValue.length).split(''), true))
       }
-      console.log(newValue)
     },
 
     // 按位运算
