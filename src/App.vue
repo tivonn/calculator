@@ -56,8 +56,10 @@ export default {
 <style lang="scss">
 #app {
   width: 100%;
+  min-width: 800px;
   height: 100%;
   background-color: #e6e6e6;
+  overflow: auto;
   font-family: PingFangSC, 微软雅黑, Helvetica, Arial, sans-serif;
   .calculator-container {
     width: calc(100% - 400px);

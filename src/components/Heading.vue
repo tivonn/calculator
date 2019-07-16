@@ -17,9 +17,9 @@ export default {
 
 <style lang='scss'>
 .heading-container {
-  height: 45px;
+  height: 5vh;
   padding-left: 10px;
-  line-height: 45px;
+  line-height: 5vh;
   .calculator-mode {
     margin-left: 10px;
     font-size: 20px;

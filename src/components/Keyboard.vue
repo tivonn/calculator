@@ -701,7 +701,7 @@ export default {
   table-layout: fixed;
   .key-item {
     width: 100%;
-    height: 60px;
+    height: 8vh;
     position: relative;
     background-color: #f0f0f0;
     border: none;

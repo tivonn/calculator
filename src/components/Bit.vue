@@ -124,13 +124,12 @@ export default {
 
 <style lang='scss'>
 .bit-container {
-  padding: 12px 20px;
+  padding: 0 20px;
   background-color: #f0f0f0;
   .bit-item {
     width: calc((100% - 45px) / 16);
-    height: 71px;
+    height: 12vh;
     display: inline-block;
-    margin-top: 15px;
     text-align: center;
     vertical-align: top;
     &:nth-child(4n + 1) {
@@ -141,17 +140,18 @@ export default {
     }
   }
   .bit-text {
+    margin-top: 3vh;
     background-color: #f0f0f0;
     border: none;
     outline: none;
     font-size: 20px;
     font-weight: bold;
     cursor: pointer;
-    &.active {
-      color: #4093ff;
-    }
     &:hover {
       color: #666;
+    }
+    &.active {
+      color: #4093ff;
     }
     &[disabled] {
       color: #c8c8c8;
@@ -160,7 +160,7 @@ export default {
   }
   .bit-index {
     display: block;
-    margin-top: 12px;
+    margin-top: 1.5vh;
     font-size: 14px;
   }
 }

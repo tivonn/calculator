@@ -87,19 +87,21 @@ export default {
 <style lang="scss">
 .memory-container {
   width: 400px;
+  height: 99vh;
   float: left;
-  padding-top: 10px;
+  position: relative;
   padding-left: 20px;
   .memory-title {
     width: 35px;
-    height: 25px;
-    margin-bottom: 30px;
+    height: 5vh;
+    line-height: 5vh;
     border-bottom: 3px solid #409eff;
     text-align: center;
     font-weight: bold;
   }
   .memory-list {
-    max-height: calc(100vh - 105px);
+    max-height: calc(92vh - 40px);
+    margin-top: 2vh;
     overflow: auto;
   }
   .memory-item {
@@ -119,7 +121,7 @@ export default {
   }
   .memory-value {
     height: 60px;
-    line-height: 60px;
+    line-height: 70px;
     font-size: 22px;
     font-weight: bold;
   }
@@ -138,7 +140,7 @@ export default {
     width: 40px;
     height: 40px;
     display: inline-block;
-    position: fixed;
+    position: absolute;
     right: 0;
     bottom: 0;
     line-height: 40px;
@@ -150,6 +152,7 @@ export default {
     }
   }
   .no-memory {
+    margin-top: 2vh;
     font-weight: bold;
   }
 }

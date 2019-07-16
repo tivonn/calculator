@@ -91,19 +91,22 @@ export default {
 <style lang='scss'>
 .result-container {
   .expressions {
-    height: 40px;
-    margin-top: 5px;
-    font-size: 14px;
+    height: 6vh;
+    line-height: 6vh;
+    font-size: 16px;
     text-align: right;
     color: #5c5c5c;
   }
   .system-value {
-    margin-top: 15px;
-    font-size: 24px;
+    height: 12vh;
+    line-height: 8vh;
+    font-size: 46px;
     text-align: right;
     font-weight: bold;
   }
   .system-item {
+    height: 5vh;
+    line-height: 5vh;
     border-left: 3px solid #e6e6e6;
     cursor: pointer;
     &:hover {
@@ -115,10 +118,8 @@ export default {
   }
   .system-type,
   .system-count {
-    height: 30px;
     float: left;
-    line-height: 30px;
-    font-size: 13px;
+    font-size: 14px;
     font-weight: bold;
   }
   .system-type {

@@ -103,9 +103,9 @@ export default {
 .navigation-container {
   .function-item {
     width: 100px;
-    height: 45px;
+    height: 7vh;
     float: left;
-    line-height: 45px;
+    line-height: 7vh;
     text-align: center;
     cursor: pointer;
     &:hover {
@@ -115,6 +115,9 @@ export default {
   .all-keyboard,
   .bit-keyboard {
     border-bottom: 3px solid #e6e6e6;
+    &:hover {
+      border-color: #dbdbdb;
+    }
     &.active {
       border-color: #409eff;
     }
