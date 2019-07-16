@@ -8,7 +8,7 @@
         @toggle-keyboard="toggleKeyboard"
         @ms="ms"
       ></navigation>
-      <keyboard v-show="showAllKeyboard"></keyboard>
+      <keyboard v-show="showAllKeyboard" v-model="showAllKeyboard"></keyboard>
       <bit v-show="!showAllKeyboard"></bit>
     </div>
     <memory ref="memory"></memory>

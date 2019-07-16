@@ -29,9 +29,18 @@
 import { mapState, mapGetters } from 'vuex'
 import { SYSTEM } from '@/utils/enum'
 import { convertSystem, setPrefixBit, deletePrefixZero, inversePlusOne, concat0B, isNegative, absValue } from '@/utils'
+import Mousetrap from 'mousetrap'
 
 export default {
   name: 'Keyboard',
+
+  props: {
+    value: {
+      type: Boolean,
+      required: true,
+      default: false
+    }
+  },
 
   data () {
     return {
@@ -291,7 +300,138 @@ export default {
     }
   },
 
+  mounted () {
+    this.init()
+  },
+
+  watch: {
+    value (newValue) {
+      if (newValue) {
+        this.initMousetrap()
+      } else {
+        this.resetMousetrap()
+      }
+    }
+  },
+
   methods: {
+    init () {
+      this.initMousetrap()
+    },
+
+    // 键盘监听
+    initMousetrap () {
+      // todo ce、backspace
+      const mousetrapMap = {
+        '0': {
+          value: `0`,
+          callback: this.keyValue
+        },
+        '1': {
+          value: `1`,
+          callback: this.keyValue
+        },
+        '2': {
+          value: `2`,
+          callback: this.keyValue
+        },
+        '3': {
+          value: `3`,
+          callback: this.keyValue
+        },
+        '4': {
+          value: `4`,
+          callback: this.keyValue
+        },
+        '5': {
+          value: `5`,
+          callback: this.keyValue
+        },
+        '6': {
+          value: `6`,
+          callback: this.keyValue
+        },
+        '7': {
+          value: `7`,
+          callback: this.keyValue
+        },
+        '8': {
+          value: `8`,
+          callback: this.keyValue
+        },
+        '9': {
+          value: `9`,
+          callback: this.keyValue
+        },
+        '+': {
+          value: `+`,
+          callback: this.keyArithmetic
+        }, 
+        '-': {
+          value: `-`,
+          callback: this.keyArithmetic
+        },
+        '*': {
+          value: `×`,
+          callback: this.keyArithmetic
+        },
+        '/': {
+          value: `÷`,
+          callback: this.keyArithmetic
+        },
+        '(': {
+          value: ``,
+          callback: this.keyLeftBracket
+        },
+        ')': {
+          value: ``,
+          callback: this.keyRightBracket
+        },
+        '<': {
+          value: `Lsh`,
+          callback: this.keyMove
+        },
+        '>': {
+          value: `Rsh`,
+          callback: this.keyMove
+        },
+        '|': {
+          value: `Or`,
+          callback: this.keyBitwise
+        },
+        '^': {
+          value: `Xor`,
+          callback: this.keyBitwise
+        },
+        '~': {
+          value: `Not`,
+          callback: this.keyBitwise
+        },
+        '&': {
+          value: `And`,
+          callback: this.keyBitwise
+        },
+        '%': {
+          value: ``,
+          callback: this.keyMod
+        },
+        'enter': {
+          value: `Rsh`,
+          callback: this.keyEqual
+        }
+      }
+      for (let key in mousetrapMap) {
+        let mousetrap = mousetrapMap[key]
+        Mousetrap.bind(key, () => {
+          mousetrap.callback(mousetrap.value)
+        }) 
+      }
+    },
+
+    resetMousetrap () {
+      Mousetrap.reset()
+    },
+
     // 左移右移
     keyMove (direction) {
       this.handleExpression({
