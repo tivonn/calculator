@@ -28,7 +28,7 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapGetters } from 'vuex'
 import { BIT_LENGTH } from '@/utils/enum'
 
 export default {
@@ -70,7 +70,7 @@ export default {
   },
 
   computed: {
-    ...mapState([
+    ...mapGetters([
       'bitLength'
     ])
   },
@@ -89,11 +89,11 @@ export default {
     },
 
     setBitLength () {
-      this.$store.commit('setBitLength', this.bitLengthOptions[`QWORD`])
+      this.$store.dispatch('setBitLength', this.bitLengthOptions[`QWORD`])
     },
 
     switchBitLength () {
-      this.$store.commit('setBitLength', this.bitLengthOptions[this.bitLength.next])
+      this.$store.dispatch('setBitLength', this.bitLengthOptions[this.bitLength.next])
     }
   }
 }
@@ -112,7 +112,8 @@ export default {
       background-color: #dbdbdb;
     }
   }
-  .all-keyboard, .bit-keyboard {
+  .all-keyboard,
+  .bit-keyboard {
     border-bottom: 3px solid #e6e6e6;
     &.active {
       border-color: #409eff;

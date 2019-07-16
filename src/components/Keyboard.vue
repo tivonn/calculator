@@ -26,7 +26,7 @@
 </template>
 
 <script>
-import { mapState, mapGetters } from 'vuex'
+import { mapGetters } from 'vuex'
 import { SYSTEM } from '@/utils/enum'
 import { convertSystem, setPrefixBit, deletePrefixZero, inversePlusOne, concat0B, isNegative, absValue } from '@/utils'
 import Mousetrap from 'mousetrap'
@@ -336,13 +336,10 @@ export default {
   },
 
   computed: {
-    ...mapState([,
+    ...mapGetters([
       'expressions',
       'binValue',
-      'systemType'
-    ]),
-
-    ...mapGetters([
+      'systemType',
       'systemValue',
       'bitLengthCount'
     ]),
@@ -425,10 +422,10 @@ export default {
       }
       if (newValue.slice(0, 1) === `0`) {
         // 正数去除前面多余的0后存储
-        this.$store.commit('setBinValue', deletePrefixZero(newValue))
+        this.$store.dispatch('setBinValue', deletePrefixZero(newValue))
       } else {
         // 负数去除第一位的1，取反加1，求出十进制对应的正值，加上-号存储
-        this.$store.commit('setBinValue', inversePlusOne(newValue.slice(1, newValue.length).split(''), true))
+        this.$store.dispatch('setBinValue', inversePlusOne(newValue.slice(1, newValue.length).split(''), true))
       }
     },
 
@@ -441,7 +438,7 @@ export default {
       // 按位非需要交换数字与符号顺序
       if (type === `Not`) {
         let length = this.expressions.length
-        this.$store.commit('setExpressions', this.expressions.slice(0, length - 2).concat([this.expressions[length - 1], this.expressions[length - 2]]))
+        this.$store.dispatch('setExpressions', this.expressions.slice(0, length - 2).concat([this.expressions[length - 1], this.expressions[length - 2]]))
       }
     },
 
@@ -580,22 +577,22 @@ export default {
 
     // 向表达式插入元素
     addExpression (expression) {
-      this.$store.commit('setExpressions', this.expressions.concat(expression))
+      this.$store.dispatch('setExpressions', this.expressions.concat(expression))
     },
 
     // 替换表达式最后一个元素
     replaceExpression (expression) {
-      this.$store.commit('setExpressions', this.expressions.slice(0, this.expressions.length - 1).concat(expression))
+      this.$store.dispatch('setExpressions', this.expressions.slice(0, this.expressions.length - 1).concat(expression))
     },
 
     // 清除表达式
     clearExpressions () {
-      this.$store.commit('setExpressions', [])
+      this.$store.dispatch('setExpressions', [])
     },
 
     // 更新当前二进制
     setBinValue (systemValue, systemType) {
-      this.$store.commit(
+      this.$store.dispatch(
         'setBinValue',
         convertSystem(systemValue, systemType, SYSTEM[`bin`])
       )
@@ -603,7 +600,7 @@ export default {
 
     // 清除当前二进制
     clearBinValue () {
-      this.$store.commit('setBinValue', `0`)
+      this.$store.dispatch('setBinValue', `0`)
     },
 
     // 求值
@@ -625,7 +622,7 @@ export default {
         this.extraLeftBracket--
       }
       let expressions = this.expressions.map(expression => this.convertCalc(expression)).join(``)
-      this.$store.commit(
+      this.$store.dispatch(
         'setBinValue',
         this.handleResult(eval(expressions))
       )

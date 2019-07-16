@@ -18,7 +18,7 @@
 </template>
 
 <script>
-import { mapState, mapGetters } from 'vuex'
+import { mapGetters } from 'vuex'
 import { SYSTEM } from '@/utils/enum'
 import { convertSystem, isNegative } from '@/utils'
 
@@ -26,13 +26,10 @@ export default {
   name: 'Result',
 
   computed: {
-    ...mapState([,
-      'expressions',
-      'systemType',
-      'binValue'
-    ]),
-
     ...mapGetters([
+      'expressions',
+      'binValue',
+      'systemType',
       'systemValue'
     ]),
 
@@ -85,7 +82,7 @@ export default {
 
     // 切换进制
     switchSystem (type) {
-      this.$store.commit('setSystemType', type)
+      this.$store.dispatch('setSystemType', type)
     }
   }
 }
