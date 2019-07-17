@@ -330,6 +330,22 @@ export default {
           callback: this.keyEqual
         }
       ],
+      // 按照MDN文档(https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Operator_Precedence)的优先级序号排序
+      symbolPriority: {
+        '(': 20,  // 左括号优先级最高，输入左括号时表达式应为空
+        'Not': 16,
+        '×': 14,
+        '÷': 14,
+        'Mod': 14,
+        '+': 13,
+        '-': 13,
+        'Lsh': 12,
+        'Rsh': 12,
+        'And': 9,
+        'Xor': 8,
+        'Or': 7,
+        ')': 0, // 此处特例，右括号优先级设置为最小，因为输入右括号时需要拿到前面一串表达式
+      },
       isRotateMove: false, // 是否循环位移,
       extraLeftBracket: 0 // 左括号比右括号多的数量
     }
@@ -338,6 +354,7 @@ export default {
   computed: {
     ...mapGetters([
       'expressions',
+      'tempValue',
       'binValue',
       'systemType',
       'systemValue',
@@ -364,11 +381,20 @@ export default {
     // 当前位数可以输入的最小值
     minValue () {
       return -Math.pow(2, this.bitLengthCount - 1)
+    },
+
+    // 处于按下'='后的状态
+    hasEqual () {
+      return !this.expressions.length && !!this.tempValue
     }
   },
 
   mounted () {
     this.init()
+  },
+
+  beforeDestroy () {
+    this.resetMousetrap()
   },
 
   watch: {
@@ -389,8 +415,9 @@ export default {
     // 键盘监听
     initMousetrap () {
       for (let key of this.keys) {
-        if (key.canKeyIn) {
+        if (key.canKeyIn) { // 存在键盘事件时再绑定
           Mousetrap.bind(key.keyValue, () => {
+            // 判断当前进制是否为禁用状态
             if (key.disableds.some(disabled => disabled === this.systemType)) return
             key.callback(key.type)
           })
@@ -398,6 +425,7 @@ export default {
       }
     },
 
+    // 停用键盘监听
     resetMousetrap () {
       Mousetrap.reset()
     },
@@ -408,6 +436,7 @@ export default {
         type: `move`,
         value: direction
       })
+      this.setTempValue()
     },
 
     // 循环左移右移
@@ -440,6 +469,7 @@ export default {
         let length = this.expressions.length
         this.$store.dispatch('setExpressions', this.expressions.slice(0, length - 2).concat([this.expressions[length - 1], this.expressions[length - 2]]))
       }
+      this.setTempValue()
     },
 
     // 切换（循环）位移
@@ -481,19 +511,22 @@ export default {
     keyMod () {
       this.handleExpression({
         type: `mod`,
-        value: `mod`
+        value: `Mod`
       })
+      this.setTempValue()
     },
 
     // 清除当前值
     keyCe () {
       this.clearBinValue()
+      this.clearTempValue()
     },
 
     // 重置
     keyReset () {
       this.clearBinValue()
       this.clearExpressions()
+      this.clearTempValue()
       this.extraLeftBracket = 0
     },
 
@@ -512,10 +545,15 @@ export default {
         type: `arithmetic`,
         value: arithmetic
       })
+      this.setTempValue()
     },
 
     // 输入值
     keyValue (value) {
+      if (this.hasEqual) {
+        this.clearTempValue()
+        this.clearBinValue()
+      }
       // 将systemValue拼接输入的值后，转化为二进制存储
       let systemValue =
         this.systemValue === `0` ? value : this.systemValue.concat(value)
@@ -532,6 +570,7 @@ export default {
         type: `bracket`,
         value: `(`
       })
+      this.setTempValue()
     },
 
     // 右括号
@@ -543,6 +582,7 @@ export default {
         value: `)`
       })
       this.extraLeftBracket--
+      this.setTempValue()
     },
 
     // 切换正负
@@ -603,30 +643,74 @@ export default {
       this.$store.dispatch('setBinValue', `0`)
     },
 
+    // 计算临时结果
+    setTempValue () {
+      // 找出需要临时计算结果的表达式。规则为以数组尾的运算符作为衡量，向前遍历，直到遇到优先级小于衡量运算符优先级的为止，中间这段记为临时计算的表达式。如果遍历过程中遇到右括号，应该记录起来，且此时不再比较运算符优先级，遇到左括号则抵消，如果遇到没有匹配的左括号，则直接中断遍历。这段找表达式的方法扩展为分析多段表达式后，也可以作为替代eval计算的方式。
+      let lastPosition = this.expressions.length - 1
+      let currentPriority = this.symbolPriority[this.expressions[lastPosition].value]
+      let position = lastPosition - 1
+      let rightBracket = 0
+      while (position >= 0) {
+        if (this.expressions[position].value === `)`) {
+          rightBracket++
+        } else if (this.expressions[position].value === `(`) {
+          if (rightBracket <= 0) {
+            break
+          }
+          rightBracket--
+        }
+        if (rightBracket <= 0) {
+          let priority = this.symbolPriority[this.expressions[position].value]
+          if (priority && priority < currentPriority) {
+            break
+          }
+        }
+        position--
+      }
+      let expressions = this.expressions.slice(position + 1, this.expressions.length - 1)
+      this.keyEqual(expressions)
+    },
+
+    clearTempValue () {
+      this.$store.dispatch('setTempValue', null)
+    },
+
     // 求值
-    keyEqual () {
-      // 先将当前二进制插入表达式，再进行计算
-      let type = this.expressions[this.expressions.length - 1].type
-      if (type !== `value` && type !== `bracket`) {
-        this.addExpression({
-          type: `value`,
-          value: this.binValue
-        })
+    keyEqual (value) {
+      let isTemp = value !== `=`
+      if (!isTemp) {
+        // 先将当前二进制插入表达式，再进行计算
+        let type = this.expressions[this.expressions.length - 1].type
+        if (type !== `value` && type !== `bracket`) {
+          this.addExpression({
+            type: `value`,
+            value: this.binValue
+          })
+        }
+        // 匹配对应数量的括号
+        while (this.extraLeftBracket) {
+          this.addExpression({
+            type: `bracket`,
+            value: `)`
+          })
+          this.extraLeftBracket--
+        }
       }
-      // 匹配对应数量的括号
-      while (this.extraLeftBracket) {
-        this.addExpression({
-          type: `bracket`,
-          value: `)`
-        })
-        this.extraLeftBracket--
+      let convertExpressions = isTemp ? value : this.expressions
+      let expressions = convertExpressions.map(expression => this.convertCalc(expression)).join(``)
+      let result = expressions.length ? this.handleResult(eval(expressions)) : `0`
+      if (!isTemp) {
+       this.$store.dispatch(
+          'setTempValue',
+          result
+        )
+        this.clearExpressions()
+      } else {
+        this.$store.dispatch(
+          'setTempValue',
+          result
+        )
       }
-      let expressions = this.expressions.map(expression => this.convertCalc(expression)).join(``)
-      this.$store.dispatch(
-        'setBinValue',
-        this.handleResult(eval(expressions))
-      )
-      this.clearExpressions()
     },
 
     // 转换表达式为计算的值
@@ -686,6 +770,7 @@ export default {
       return disableds.some(systemType => systemType === this.systemType)
     },
 
+    // key的样式
     keyClass (key) {
       const switchMove = key.type === `↑` && this.isRotateMove ? 'active' : ''
       const classList = [switchMove]

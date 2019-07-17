@@ -4,6 +4,7 @@ import { convertSystem } from '@/utils'
 
 const state = {
   expressions: [],
+  tempValue: null,
   binValue: `0`,
   systemType: `dec`,
   bitLength: {},
@@ -12,6 +13,9 @@ const state = {
 const getters = {
   // 计算表达式
   expressions: state => state.expressions,
+
+  // 临时表达式的值
+  tempValue: state => state.tempValue,
 
   // 当前值的二进制
   binValue: state => state.binValue,
@@ -42,16 +46,22 @@ const actions = {
     commit(types.SET_EXPRESSIONS, value)
   },
 
+  setTempValue ({ commit }, value) {
+    commit(types.SET_TEMP_VALUE, value)
+  },
+
   setBinValue ({ commit }, value) {
-    commit(types.SET_BINVALUE, value)
+    commit(types.SET_BIN_VALUE, value)
+    // 输入值的时候，需要清空临时表达式计算出的值
+    commit(types.SET_TEMP_VALUE, null)
   },
 
   setSystemType ({ commit }, value) {
-    commit(types.SET_SYSTEMTYPE, value)
+    commit(types.SET_SYSTEM_TYPE, value)
   },
 
   setBitLength ({ commit }, value) {
-    commit(types.SET_BITLENGTH, value)
+    commit(types.SET_BIT_LENGTH, value)
   }
 }
 
@@ -60,15 +70,19 @@ const mutations = {
     state.expressions = value   
   },
 
-  [types.SET_BINVALUE] (state, value) {
+  [types.SET_TEMP_VALUE] (state, value) {
+    state.tempValue = value
+  },
+
+  [types.SET_BIN_VALUE] (state, value) {
     state.binValue = value
   },
 
-  [types.SET_SYSTEMTYPE] (state, value) {
+  [types.SET_SYSTEM_TYPE] (state, value) {
     state.systemType = value
   },
 
-  [types.SET_BITLENGTH] (state, value) {
+  [types.SET_BIT_LENGTH] (state, value) {
     state.bitLength = value
   }
 }
