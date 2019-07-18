@@ -550,9 +550,8 @@ export default {
 
     // 输入值
     keyValue (value) {
-      if (this.hasEqual) {
-        this.clearTempValue()
-        this.clearBinValue()
+      if (this.hasEqual || this.expressions.length && this.expressions[this.expressions.length - 1].type === `value`) {
+        this.keyReset()
       }
       // 将systemValue拼接输入的值后，转化为二进制存储
       let systemValue =
@@ -565,6 +564,9 @@ export default {
 
     // 左括号
     keyLeftBracket () {
+      // 表达式最后为右括号时，不增加左括号
+      let lastExpression = this.expressions[this.expressions.length - 1]
+      if (lastExpression && lastExpression.value === `)`) return
       this.extraLeftBracket++
       this.addExpression({
         type: `bracket`,
@@ -605,11 +607,14 @@ export default {
       } else if (this.expressions.length && this.expressions[this.expressions.length - 1].value === `)`) {  // 最后为右括号时，直接插入符号
         this.addExpression(expression)
       } else {
-        // 先将当前二进制插入表达式，再插入符号
-        this.addExpression({
-          type: `value`,
-          value: this.binValue
-        })
+        // 加上对非的判断条件
+        if (!this.expressions.length || this.expressions.length && this.expressions[this.expressions.length - 1].type !== `value`) {
+          // 先将当前二进制插入表达式，再插入符号
+          this.addExpression({
+            type: `value`,
+            value: this.binValue
+          })
+        }
         this.clearBinValue()
         this.addExpression(expression)
       }
@@ -646,7 +651,12 @@ export default {
     // 计算临时结果
     setTempValue () {
       // 找出需要临时计算结果的表达式。规则为以数组尾的运算符作为衡量，向前遍历，直到遇到优先级小于衡量运算符优先级的为止，中间这段记为临时计算的表达式。如果遍历过程中遇到右括号，应该记录起来，且此时不再比较运算符优先级，遇到左括号则抵消，如果遇到没有匹配的左括号，则直接中断遍历。这段找表达式的方法扩展为分析多段表达式后，也可以作为替代eval计算的方式。
-      let lastPosition = this.expressions.length - 1
+      let lastPosition
+      for (lastPosition = this.expressions.length - 1; lastPosition >= 0; lastPosition--) {
+        if (this.expressions[lastPosition].type !== `value`) {
+          break
+        }
+      }
       let currentPriority = this.symbolPriority[this.expressions[lastPosition].value]
       let position = lastPosition - 1
       let rightBracket = 0
@@ -667,7 +677,8 @@ export default {
         }
         position--
       }
-      let expressions = this.expressions.slice(position + 1, this.expressions.length - 1)
+      // 非比较特殊，是将符号插入到数字前，所以截取的时候需要多截一个表达式
+      let expressions = this.expressions.slice(position + 1, this.expressions[lastPosition].value === `Not` ? this.expressions.length : this.expressions.length - 1)
       this.keyEqual(expressions)
     },
 
@@ -680,7 +691,8 @@ export default {
       let isTemp = value !== `=`
       if (!isTemp) {
         // 先将当前二进制插入表达式，再进行计算
-        let type = this.expressions[this.expressions.length - 1].type
+        let lastExpression = this.expressions[this.expressions.length - 1]
+        let type = lastExpression && lastExpression.type || null
         if (type !== `value` && type !== `bracket`) {
           this.addExpression({
             type: `value`,
@@ -700,7 +712,11 @@ export default {
       let expressions = convertExpressions.map(expression => this.convertCalc(expression)).join(``)
       let result = expressions.length ? this.handleResult(eval(expressions)) : `0`
       if (!isTemp) {
-       this.$store.dispatch(
+        this.$store.dispatch(
+          'setBinValue',
+          result
+        )
+        this.$store.dispatch(
           'setTempValue',
           result
         )

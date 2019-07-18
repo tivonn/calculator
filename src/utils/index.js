@@ -26,6 +26,7 @@ export const setPrefixBit = (binValue, totalLength) => {
   }
 }
 
+// 去除前缀多余的0
 export const deletePrefixZero = (value) => {
   let index = value.split('').findIndex(bit => bit !== `0`)
   return index > -1 ? value.slice(index, value.length) : `0`

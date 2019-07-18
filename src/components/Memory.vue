@@ -7,6 +7,7 @@
           v-for="(memory, index) in showMemories"
           :key="memory.id"
           class="memory-item"
+          @click="setBinValue(memory)"
         >
           <p class="memory-value">{{ memory.value }}</p>
           <div>
@@ -60,6 +61,11 @@ export default {
         id: new Date().getTime(),  // 使用当前时间戳作为id
         value: this.binValue
       }].concat(this.memories))
+    },
+
+    // 选择memory的值作为binValue
+    setBinValue (memory) {
+      this.$store.dispatch('setBinValue', convertSystem(memory.value, SYSTEM[this.systemType], SYSTEM[`bin`]))
     },
 
     deleteMemory (index) {

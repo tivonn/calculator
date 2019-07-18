@@ -70,6 +70,14 @@ export default {
         this.updatePrefixBit(`0`, this.signPosition)
       }
       this.setBinValue()
+    },
+
+    showBinValue () {
+      // 需要保证禁用前缀为0
+      let disabledLength = this.totalLength - this.bitLengthCount
+      for (let i = 0; i< disabledLength; i++) {
+        this.showBinValue[i] = `0`
+      }
     }
   },
 
