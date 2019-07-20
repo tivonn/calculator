@@ -22,7 +22,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import { SYSTEM } from '@/utils/enum'
-import { convertSystem, setPrefixBit, deletePrefixZero, inversePlusOne, concat0B, isNegative, absValue } from '@/utils'
+import { convertSystem, setPrefixBit, deletePrefixZero, inversePlusOne, concat0B, isNegative, absValue, calculate } from '@/utils'
 import Mousetrap from 'mousetrap'
 
 export default {
@@ -377,6 +377,11 @@ export default {
       return !this.expressions.length && !!this.tempValue
     },
 
+    // 表达式最后一位为值
+    isValueEnd () {
+      return !!this.expressions.length && this.expressions[this.expressions.length - 1].type === `value`
+    },
+
     // 左括号比右括号多的数量
     extraLeftBracket () {
       let extraLeftBracket = 0
@@ -559,8 +564,10 @@ export default {
 
     // 输入值
     keyValue (value) {
+      // 表达式最后一位为右括号时，禁止输入值
+      if (this.isRightBracketEnd) return
       // 计算完成时，或表达式最后一位是值（兼容按位非）时，需要重置
-      if (this.hasEqual || this.expressions.length && this.expressions[this.expressions.length - 1].type === `value`) {
+      if (this.hasEqual || this.isValueEnd) {
         this.reset()
       }
       // 将systemValue拼接输入的值后，转化为二进制存储
@@ -573,8 +580,8 @@ export default {
 
     // 左括号
     keyLeftBracket () {
-      // 表达式最后为右括号时，不增加左括号
-      if (this.isRightBracketEnd) return
+      // 表达式最后为右括号或数字时，不增加左括号
+      if (this.isRightBracketEnd || this.isValueEnd) return
       this.addExpression({
         type: `bracket`,
         value: `(`
@@ -718,7 +725,7 @@ export default {
       }
       let convertExpressions = isTemp ? value : this.expressions
       let expressions = convertExpressions.map(expression => this.convertCalc(expression)).join(``)
-      let result = expressions.length ? this.handleResult(eval(expressions)) : `0`
+      let result = expressions.length ? this.handleResult(calculate(expressions)) : `0`
       if (!isTemp) {
         this.$store.dispatch('setBinValue', result)
         this.$store.dispatch('setTempValue', result)
@@ -766,7 +773,7 @@ export default {
     // 判断是否溢出
     handleResult (result) {
       let binValue = convertSystem(result, SYSTEM[`dec`], SYSTEM[`bin`])
-      let length = isNegative(binValue) ? binValue.length - 1 :binValue.length
+      let length = isNegative(binValue) ? binValue.length - 1 : binValue.length
       // 获取对应的位数
       if (length > this.bitLengthCount) {
         // 从字符串尾部开始截取

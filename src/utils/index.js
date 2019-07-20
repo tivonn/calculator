@@ -34,7 +34,7 @@ export const deletePrefixZero = (value) => {
 
 // 二进制取反加一
 export const inversePlusOne = (value, needNegative) => {
-  let newValue = eval(`(${concat0B(value.split('').map(bit => bit === `1` ? `0` : `1`).join(''))} +${concat0B(`1`)})`)
+  let newValue = calculate(`(${concat0B(value.split('').map(bit => bit === `1` ? `0` : `1`).join(''))} + ${concat0B(`1`)})`)
   return convertSystem(`${needNegative ? `-` : ``}${newValue}`, SYSTEM[`dec`], SYSTEM[`bin`])
 }
 
@@ -57,4 +57,14 @@ export const absValue = systemValue => {
   return isNegative(systemValue)
     ? systemValue.slice(1, systemValue.length)
     : systemValue
+}
+
+// 处理连续的减号，将其变为+，否则无法进行eval计算
+export const convertMinus = expressions => {
+  return expressions.replace(/--/g, '+')
+}
+
+// 计算
+export const calculate = expressions => {
+  return eval(convertMinus(expressions))
 }

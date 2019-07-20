@@ -29,7 +29,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import { SYSTEM } from '@/utils/enum'
-import { convertSystem, concat0B } from '@/utils'
+import { convertSystem, concat0B, calculate } from '@/utils'
 
 export default {
   name: 'Memory',
@@ -71,7 +71,7 @@ export default {
     },
 
     updateMemory (arithmetic, index) {
-      let newValue = convertSystem(eval(`${concat0B(this.memories[index].value)}${arithmetic}${concat0B(this.binValue)}`), SYSTEM[`dec`], SYSTEM[`bin`])
+      let newValue = convertSystem(calculate(`${concat0B(this.memories[index].value)}${arithmetic}${concat0B(this.binValue)}`), SYSTEM[`dec`], SYSTEM[`bin`])
       this.$store.dispatch('updateMemory', {
         id: this.memories[index].id,
         newValue
