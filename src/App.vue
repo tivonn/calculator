@@ -4,12 +4,12 @@
       <heading></heading>
       <result></result>
       <navigation
-        :showAllKeyboard="showAllKeyboard"
+        :showKeyboard="showKeyboard"
         @toggle-keyboard="toggleKeyboard"
-        @ms="ms"
-      ></navigation>
-      <keyboard v-show="showAllKeyboard" v-model="showAllKeyboard"></keyboard>
-      <bit v-show="!showAllKeyboard"></bit>
+        @ms="ms">
+      </navigation>
+      <keyboard v-show="showKeyboard" v-model="showKeyboard"></keyboard>
+      <bit v-show="!showKeyboard"></bit>
     </div>
     <memory ref="memory"></memory>
   </div>
@@ -28,15 +28,17 @@ export default {
 
   data () {
     return {
-      showAllKeyboard: true,
+      showKeyboard: true
     }
   },
 
   methods: {
+    // 切换全键盘和bit视图
     toggleKeyboard (value) {
-      this.showAllKeyboard = value
+      this.showKeyboard = value
     },
 
+    // 保存
     ms () {
       this.$refs.memory.addMemory()
     }
@@ -55,9 +57,9 @@ export default {
 
 <style lang="scss">
 #app {
-  width: 100%;
+  width: 100vw;
   min-width: 800px;
-  height: 100%;
+  height: 100vh;
   background-color: #e6e6e6;
   overflow: auto;
   font-family: PingFangSC, 微软雅黑, Helvetica, Arial, sans-serif;

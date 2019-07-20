@@ -2,27 +2,23 @@
   <div class="navigation-container clear-fix">
     <span
       class="function-item all-keyboard"
-      :class="{ active: showAllKeyboard }"
+      :class="{ active: showKeyboard }"
       title="全键盘"
-      @click="toggleAllKeyboard(true)"
-    >
+      @click="toggleKeyboard(true)">
       <svg class="iconfont">
         <use xlink:href="#icon-calculator"></use>
       </svg>
     </span>
     <span
       class="function-item bit-keyboard"
-      :class="{ active: !showAllKeyboard }"
+      :class="{ active: !showKeyboard }"
       title="比特绷板键盘"
-      @click="toggleAllKeyboard(false)"
-    >
+      @click="toggleKeyboard(false)">
       <svg class="iconfont">
         <use xlink:href="#icon-binary"></use>
       </svg>
     </span>
-    <span class="function-item switch-bit-length" @click="switchBitLength">{{
-      bitLength.type
-    }}</span>
+    <span class="function-item switch-bit-length" @click="switchBitLength">{{ bitLength.type }}</span>
     <span class="function-item" title="内存存储" @click="$emit(`ms`)">MS</span>
   </div>
 </template>
@@ -35,7 +31,7 @@ export default {
   name: 'Navigation',
 
   props: {
-    showAllKeyboard: {
+    showKeyboard: {
       type: Boolean,
       required: true,
       default: true
@@ -84,7 +80,7 @@ export default {
       this.setBitLength()
     },
 
-    toggleAllKeyboard (value) {
+    toggleKeyboard (value) {
       this.$emit(`toggle-keyboard`, value)
     },
 
@@ -112,8 +108,7 @@ export default {
       background-color: #dbdbdb;
     }
   }
-  .all-keyboard,
-  .bit-keyboard {
+  .all-keyboard, .bit-keyboard {
     border-bottom: 3px solid #e6e6e6;
     &:hover {
       border-color: #dbdbdb;

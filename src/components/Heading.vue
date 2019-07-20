@@ -21,7 +21,7 @@ export default {
   padding-left: 10px;
   line-height: 5vh;
   .calculator-mode {
-    margin-left: 10px;
+    margin-left: 15px;
     font-size: 20px;
   }
 }

@@ -7,7 +7,7 @@ const state = {
   tempValue: null,
   binValue: `0`,
   systemType: `dec`,
-  bitLength: {},
+  bitLength: {}
 }
 
 const getters = {
@@ -23,7 +23,7 @@ const getters = {
   // 进制类型
   systemType: state => state.systemType,
 
-  // 当前进制面板的值
+  // 当前进制下，面板的值
   systemValue: state => {
     return convertSystem(
       state.binValue,
@@ -67,7 +67,7 @@ const actions = {
 
 const mutations = {
   [types.SET_EXPRESSIONS] (state, value) {
-    state.expressions = value   
+    state.expressions = value
   },
 
   [types.SET_TEMP_VALUE] (state, value) {

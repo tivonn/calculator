@@ -6,28 +6,25 @@
         class="bit-text"
         :class="bitClass(bit)"
         :disabled="isDisabled(index)"
-        @click="toggleBit(index)"
-      >
+        @click="toggleBit(index)">
         {{ bit }}
       </button>
-      <span v-if="(index + 1) % 4 === 0" class="bit-index">{{
-        showBinValue.length - index - 1
-      }}</span>
+      <span v-if="(index + 1) % 4 === 0" class="bit-index">{{ showBinValue.length - index - 1 }}</span>
     </span>
   </div>
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
-import { SYSTEM, BIT_LENGTH } from '@/utils/enum'
-import { convertSystem, setPrefixBit, deletePrefixZero, inversePlusOne, isNegative, absValue } from '@/utils'
+import { BIT_LENGTH } from '@/utils/enum'
+import { setPrefixBit, deletePrefixZero, inversePlusOne } from '@/utils'
 
 export default {
   name: 'Bit',
 
   data () {
     return {
-      showBinValue: [],  // 当前显示的二进制的值,
+      showBinValue: [], // 当前显示的二进制的值,
       totalLength: 64 // 总共的位数
     }
   },
@@ -63,7 +60,7 @@ export default {
 
     // 切换进制
     bitLengthCount (newValue) {
-      if (newValue === BIT_LENGTH[`QWORD`] && this.showBinValue[this.byteSignPosition] === `1`) {  // 代表原本符号位为负，且由BYTE变为QWORD，将前面的位统一设置为1
+      if (newValue === BIT_LENGTH[`QWORD`] && this.showBinValue[this.byteSignPosition] === `1`) { // 代表原本符号位为负，且由BYTE变为QWORD，将前面的位统一设置为1
         this.updatePrefixBit(`1`, this.byteSignPosition)
       } else {
         // 将禁用的位统一设置为0
@@ -75,7 +72,7 @@ export default {
     showBinValue () {
       // 需要保证禁用前缀为0
       let disabledLength = this.totalLength - this.bitLengthCount
-      for (let i = 0; i< disabledLength; i++) {
+      for (let i = 0; i < disabledLength; i++) {
         this.showBinValue[i] = `0`
       }
     }
@@ -104,13 +101,13 @@ export default {
 
     // 更新binValue
     setBinValue () {
-      if (!this.isNegative) {  // 非负数
+      if (!this.isNegative) { // 非负数
         // 去除前面多余的0再存储
         let binValue = deletePrefixZero(this.showBinValue.join(''))
         this.$store.dispatch('setBinValue', binValue)
       } else {
         // 按位取反再加1，求出十进制对应的正值，再加上‘-’号存储
-        let binValue = inversePlusOne(this.showBinValue.slice(this.signPosition, this.totalLength), true)
+        let binValue = inversePlusOne(this.showBinValue.slice(this.signPosition, this.totalLength).join(''), true)
         this.$store.dispatch('setBinValue', binValue)
       }
     },

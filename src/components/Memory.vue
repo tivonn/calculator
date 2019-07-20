@@ -1,23 +1,18 @@
 <template>
   <div class="memory-container">
-    <p class="memory-title">存储</p>
+    <p class="memory-title">内存</p>
     <template v-if="memories.length">
       <ul class="memory-list">
         <li
           v-for="(memory, index) in showMemories"
           :key="memory.id"
           class="memory-item"
-          @click="setBinValue(memory)"
-        >
+          @click="setBinValue(memory)">
           <p class="memory-value">{{ memory.value }}</p>
           <div>
             <span class="operation-item" @click="deleteMemory(index)">MC</span>
-            <span class="operation-item" @click="updateMemory(`+`, index)"
-              >M+</span
-            >
-            <span class="operation-item" @click="updateMemory(`-`, index)"
-              >M-</span
-            >
+            <span class="operation-item" @click="updateMemory(`+`, index)">M+</span>
+            <span class="operation-item" @click="updateMemory(`-`, index)">M-</span>
           </div>
         </li>
       </ul>
@@ -48,9 +43,9 @@ export default {
 
     showMemories () {
       return this.memories.map(memory => {
-        return Object.assign({
+        return {
           value: convertSystem(memory.value, SYSTEM[`bin`], SYSTEM[this.systemType])
-        })
+        }
       })
     }
   },
@@ -58,7 +53,7 @@ export default {
   methods: {
     addMemory () {
       this.$store.dispatch('setMemories', [{
-        id: new Date().getTime(),  // 使用当前时间戳作为id
+        id: new Date().getTime(), // 使用当前时间戳作为id
         value: this.binValue
       }].concat(this.memories))
     },

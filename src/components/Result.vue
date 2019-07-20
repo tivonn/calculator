@@ -9,8 +9,7 @@
         :key="type"
         class="system-item clear-fix"
         :class="systemClass(type)"
-        @click="switchSystem(type)"
-      >
+        @click="switchSystem(type)">
         <span class="system-type">{{ type.toUpperCase() }}</span>
         <span class="system-count">{{ system.count }}</span>
       </li>
@@ -42,11 +41,7 @@ export default {
 
     // 显示的临时表达式的值
     showTempValue () {
-      return this.tempValue ? convertSystem(
-        this.tempValue,
-        SYSTEM[`bin`],
-        SYSTEM[this.systemType]
-      ) : null
+      return this.tempValue ? convertSystem(this.tempValue, SYSTEM[`bin`], SYSTEM[this.systemType]) : null
     },
 
     // 生成进制列表
@@ -70,7 +65,7 @@ export default {
         }
       }
       return systems
-    },
+    }
   },
 
   methods: {
@@ -108,8 +103,7 @@ export default {
     text-align: right;
     color: #5c5c5c;
   }
-  .temp-value,
-  .system-value {
+  .temp-value, .system-value {
     height: 12vh;
     line-height: 8vh;
     font-size: 46px;
@@ -128,8 +122,7 @@ export default {
       border-color: #409eff;
     }
   }
-  .system-type,
-  .system-count {
+  .system-type, .system-count {
     float: left;
     font-size: 14px;
     font-weight: bold;

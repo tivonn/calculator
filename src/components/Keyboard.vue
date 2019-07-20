@@ -1,23 +1,16 @@
 <template>
-  <table class="key-table">
+  <table class="keyboard-container">
     <!-- 此处为了简写代码，选择了遍历数字。由于数据顺序不会发生变化，且没有唯一id，遍历过程中key直接使用item对应的数字，即index -->
     <tr v-for="rowIndex in 6" :key="rowIndex">
-      <td
-        v-for="key in keys.slice((rowIndex - 1) * 6, rowIndex * 6)"
-        :key="key.type"
-        colspan="1"
-      >
+      <td v-for="key in keys.slice((rowIndex - 1) * 6, rowIndex * 6)" :key="key.type" colspan="1">
         <button
           class="key-item"
           :class="`${key.class} ${keyClass(key)}`"
           :disabled="isDisabled(key.disableds)"
-          @click="key.callback(key.type)"
-        >
+          @click="key.callback(key.type)">
           <span>{{ key.type }}</span>
           <template v-if="key.type === `(`">
-            <span v-if="extraLeftBracket > 0" class="extra-left-bracket">{{
-              extraLeftBracket
-            }}</span>
+            <span v-if="extraLeftBracket > 0" class="extra-left-bracket">{{ extraLeftBracket }}</span>
           </template>
         </button>
       </td>
@@ -46,12 +39,12 @@ export default {
     return {
       keys: [ // 键位
         {
-          type: `Lsh`,  // 类型
-          class: [],  // 类名
-          disableds: [],  // 禁用状态对应的进制
+          type: `Lsh`, // 类型
+          class: [], // 类名
+          disableds: [], // 禁用状态对应的进制
           canKeyIn: true, // 是否支持键盘输入
-          keyValue: `<`,  //  键盘输入对应的键位
-          callback: this.keyMove  // 点击回调
+          keyValue: `<`, //  键盘输入对应的键位
+          callback: this.keyMove // 点击回调
         },
         {
           type: `Rsh`,
@@ -332,7 +325,7 @@ export default {
       ],
       // 按照MDN文档(https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Operator_Precedence)的优先级序号排序
       symbolPriority: {
-        '(': 20,  // 左括号优先级最高，输入左括号时表达式应为空
+        '(': 20, // 左括号优先级最高，输入左括号时表达式应为空
         'Not': 16,
         '×': 14,
         '÷': 14,
@@ -344,7 +337,7 @@ export default {
         'And': 9,
         'Xor': 8,
         'Or': 7,
-        ')': 0, // 此处特例，右括号优先级设置为最小，因为输入右括号时需要拿到前面一串表达式
+        ')': 0 // 此处特例，因为输入右括号时，将右括号优先级设置为最小，才能按照func:setTempValue的规则拿到前面一串表达式
       },
       isRotateMove: false, // 是否循环位移,
       extraLeftBracket: 0 // 左括号比右括号多的数量
@@ -366,11 +359,7 @@ export default {
       // 若当前二进制为未输入值状态，且表达式最后一项是可被直接替换的符号
       let lastExpression = this.expressions[this.expressions.length - 1]
       const canReplaceType = [`move`, `bitwise`, `mod`, `arithmetic`]
-      if (this.binValue === `0` && lastExpression && canReplaceType.some(type => type === lastExpression.type)) {
-        return true
-      } else {
-        return false
-      }
+      return this.binValue === `0` && !!lastExpression && canReplaceType.some(type => type === lastExpression.type)
     },
 
     // 当前位数可以输入的最大值
@@ -444,7 +433,7 @@ export default {
       // 先补全位数
       let completeValue = setPrefixBit(this.binValue, this.bitLengthCount)
       let newValue
-      if (direction === `RoL`) {  // 循环左移
+      if (direction === `RoL`) { // 循环左移
         newValue = completeValue.slice(1, completeValue.length).concat(completeValue.slice(0, 1))
       } else if (direction === `RoR`) {
         newValue = completeValue.slice(completeValue.length - 1, completeValue.length).concat(completeValue.slice(0, completeValue.length - 1))
@@ -454,7 +443,7 @@ export default {
         this.$store.dispatch('setBinValue', deletePrefixZero(newValue))
       } else {
         // 负数去除第一位的1，取反加1，求出十进制对应的正值，加上-号存储
-        this.$store.dispatch('setBinValue', inversePlusOne(newValue.slice(1, newValue.length).split(''), true))
+        this.$store.dispatch('setBinValue', inversePlusOne(newValue.slice(1, newValue.length), true))
       }
     },
 
@@ -534,8 +523,7 @@ export default {
     keyBackspace () {
       let length = this.systemValue.length
       // 将systemValue退格1位后，转化成二进制存储
-      let systemValue =
-        length > 1 ? this.systemValue.slice(0, length - 1) : `0`
+      let systemValue = length > 1 ? this.systemValue.slice(0, length - 1) : `0`
       this.setBinValue(systemValue, SYSTEM[this.systemType])
     },
 
@@ -554,8 +542,7 @@ export default {
         this.keyReset()
       }
       // 将systemValue拼接输入的值后，转化为二进制存储
-      let systemValue =
-        this.systemValue === `0` ? value : this.systemValue.concat(value)
+      let systemValue = this.systemValue === `0` ? value : this.systemValue.concat(value)
       // 判断是否超出位数
       const decValue = convertSystem(systemValue, SYSTEM[this.systemType], SYSTEM[`dec`])
       if (decValue > this.maxValue || decValue < this.minValue) return
@@ -604,10 +591,10 @@ export default {
       if (this.canReplace) {
         // 替换符号
         this.replaceExpression(expression)
-      } else if (this.expressions.length && this.expressions[this.expressions.length - 1].value === `)`) {  // 最后为右括号时，直接插入符号
+      } else if (this.expressions.length && this.expressions[this.expressions.length - 1].value === `)`) { // 最后为右括号时，直接插入符号
         this.addExpression(expression)
       } else {
-        // 加上对非的判断条件
+        // 加上对按位非的判断条件
         if (!this.expressions.length || this.expressions.length && this.expressions[this.expressions.length - 1].type !== `value`) {
           // 先将当前二进制插入表达式，再插入符号
           this.addExpression({
@@ -637,10 +624,7 @@ export default {
 
     // 更新当前二进制
     setBinValue (systemValue, systemType) {
-      this.$store.dispatch(
-        'setBinValue',
-        convertSystem(systemValue, systemType, SYSTEM[`bin`])
-      )
+      this.$store.dispatch('setBinValue', convertSystem(systemValue, systemType, SYSTEM[`bin`]))
     },
 
     // 清除当前二进制
@@ -677,7 +661,7 @@ export default {
         }
         position--
       }
-      // 非比较特殊，是将符号插入到数字前，所以截取的时候需要多截一个表达式
+      // 按位非比较特殊，是将符号插入到数字前，所以截取的时候需要多截一个表达式
       let expressions = this.expressions.slice(position + 1, this.expressions[lastPosition].value === `Not` ? this.expressions.length : this.expressions.length - 1)
       this.keyEqual(expressions)
     },
@@ -712,20 +696,11 @@ export default {
       let expressions = convertExpressions.map(expression => this.convertCalc(expression)).join(``)
       let result = expressions.length ? this.handleResult(eval(expressions)) : `0`
       if (!isTemp) {
-        this.$store.dispatch(
-          'setBinValue',
-          result
-        )
-        this.$store.dispatch(
-          'setTempValue',
-          result
-        )
+        this.$store.dispatch('setBinValue', result)
+        this.$store.dispatch('setTempValue', result)
         this.clearExpressions()
       } else {
-        this.$store.dispatch(
-          'setTempValue',
-          result
-        )
+        this.$store.dispatch('setTempValue', result)
       }
     },
 
@@ -759,7 +734,7 @@ export default {
           return arithmeticMap[value]
         case `value`:
           return concat0B(value)
-        default:  // 目前只有括号模式符合
+        default: // 目前只有括号模式符合
           return value
       }
     },
@@ -776,7 +751,7 @@ export default {
       // 处理负数
       if (length === this.bitLengthCount && binValue.charAt(0) === `1`) {
         // 舍去符号位，按位取反再加1，求出十进制对应的正值，再加上‘-’号存储
-        binValue = inversePlusOne(absValue(binValue).split(''), true)
+        binValue = inversePlusOne(absValue(binValue), true)
       }
       return binValue
     },
@@ -797,7 +772,7 @@ export default {
 </script>
 
 <style lang='scss'>
-.key-table {
+.keyboard-container {
   width: 100%;
   table-layout: fixed;
   .key-item {
@@ -821,21 +796,13 @@ export default {
       }
     }
   }
-  .key-number,
-  .key-arithmetic,
-  .key-switch-sign,
-  .key-dot {
+  .key-number, .key-arithmetic, .key-switch-sign, .key-dot {
     font-size: 18px;
   }
-  .key-switch-move,
-  .key-backspace,
-  .key-bracket {
+  .key-switch-move, .key-backspace, .key-bracket {
     font-size: 16px;
   }
-  .key-ce,
-  .key-reset,
-  .key-letter,
-  .key-number {
+  .key-ce, .key-reset, .key-letter, .key-number {
     font-weight: bold;
   }
   .key-switch-move {
