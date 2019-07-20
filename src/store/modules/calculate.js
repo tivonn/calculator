@@ -4,7 +4,7 @@ import { convertSystem } from '@/utils'
 
 const state = {
   expressions: [],
-  tempValue: null,
+  isTemp: false,
   binValue: `0`,
   systemType: `dec`,
   bitLength: {}
@@ -14,8 +14,8 @@ const getters = {
   // 计算表达式
   expressions: state => state.expressions,
 
-  // 临时表达式的值
-  tempValue: state => state.tempValue,
+  // 标记当前显示的值是否是临时表达式所计算出来的
+  isTemp: state => state.isTemp,
 
   // 当前值的二进制
   binValue: state => state.binValue,
@@ -46,14 +46,14 @@ const actions = {
     commit(types.SET_EXPRESSIONS, value)
   },
 
-  setTempValue ({ commit }, value) {
-    commit(types.SET_TEMP_VALUE, value)
+  setIsTemp ({ commit }, value) {
+    commit(types.SET_IS_TEMP, value)
   },
 
   setBinValue ({ commit }, value) {
     commit(types.SET_BIN_VALUE, value)
     // 输入值的时候，需要清空临时表达式计算出的值
-    commit(types.SET_TEMP_VALUE, null)
+    commit(types.SET_IS_TEMP, false)
   },
 
   setSystemType ({ commit }, value) {
@@ -70,8 +70,8 @@ const mutations = {
     state.expressions = value
   },
 
-  [types.SET_TEMP_VALUE] (state, value) {
-    state.tempValue = value
+  [types.SET_IS_TEMP] (state, value) {
+    state.isTemp = value
   },
 
   [types.SET_BIN_VALUE] (state, value) {

@@ -1,8 +1,7 @@
 <template>
   <div class="result-container">
     <div class="expressions">{{ showExpressions }}</div>
-    <p v-if="showTempValue" class="temp-value">{{ showTempValue }}</p>
-    <p v-else class="system-value">{{ systemValue }}</p>
+    <p class="system-value">{{ systemValue }}</p>
     <ul class="system-list">
       <li
         v-for="(system, type) in systems"
@@ -28,7 +27,6 @@ export default {
   computed: {
     ...mapGetters([
       'expressions',
-      'tempValue',
       'binValue',
       'systemType',
       'systemValue'
@@ -37,11 +35,6 @@ export default {
     // 显示的表达式
     showExpressions () {
       return this.expressions.map(expression => this.convertLabel(expression)).join(` `)
-    },
-
-    // 临时表达式计算得出的值
-    showTempValue () {
-      return this.tempValue ? convertSystem(this.tempValue, SYSTEM[`bin`], SYSTEM[this.systemType]) : null
     },
 
     // 生成进制列表
@@ -103,7 +96,7 @@ export default {
     text-align: right;
     color: #5c5c5c;
   }
-  .temp-value, .system-value {
+  .system-value {
     height: 12vh;
     line-height: 8vh;
     font-size: 46px;

@@ -41,14 +41,6 @@ export default {
       'bitLengthCount',
       'memories'
     ])
-    //
-    // showMemories () {
-    //   return this.memories.map(memory => {
-    //     return {
-    //       value: convertSystem(memory.value, SYSTEM[`bin`], SYSTEM[this.systemType])
-    //     }
-    //   })
-    // }
   },
 
   methods: {
@@ -59,9 +51,9 @@ export default {
       }].concat(this.memories))
     },
 
-    // 选择memory的值作为binValue
+    // 选择memory处理过溢出后的值作为binValue
     setBinValue (memory) {
-      this.$store.dispatch('setBinValue', memory.value)
+      this.$store.dispatch('setBinValue', convertSystem(this.showMemoryValue(memory.value), SYSTEM[this.systemType], SYSTEM[`bin`]))
     },
 
     deleteMemory (index) {
