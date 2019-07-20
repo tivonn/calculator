@@ -39,7 +39,7 @@ export default {
       return this.expressions.map(expression => this.convertLabel(expression)).join(` `)
     },
 
-    // 显示的临时表达式的值
+    // 临时表达式计算得出的值
     showTempValue () {
       return this.tempValue ? convertSystem(this.tempValue, SYSTEM[`bin`], SYSTEM[this.systemType]) : null
     },
@@ -49,7 +49,7 @@ export default {
       let systems = {}
       for (let system in SYSTEM) {
         let count = convertSystem(this.binValue, SYSTEM[`bin`], SYSTEM[system])
-        // 二进制需要4位一组
+        // 二进制显示的length需要是4的倍数
         if (system === `bin`) {
           // 判断是否为正数
           if (!isNegative(count) && count !== `0`) {

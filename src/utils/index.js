@@ -49,7 +49,7 @@ export const concat0B = (value) => {
 
 // 判断是否为负数
 export const isNegative = value => {
-  return value.charAt(0) === `-`
+  return value[0] === `-`
 }
 
 // 取绝对值

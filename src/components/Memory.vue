@@ -71,7 +71,7 @@ export default {
     },
 
     updateMemory (arithmetic, index) {
-      let newValue = eval(`${concat0B(this.memories[index].value)}${arithmetic}${concat0B(this.binValue)}`).toString(SYSTEM[`bin`])
+      let newValue = convertSystem(eval(`${concat0B(this.memories[index].value)}${arithmetic}${concat0B(this.binValue)}`), SYSTEM[`dec`], SYSTEM[`bin`])
       this.$store.dispatch('updateMemory', {
         id: this.memories[index].id,
         newValue

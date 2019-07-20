@@ -9,6 +9,7 @@
           :disabled="isDisabled(key.disableds)"
           @click="key.callback(key.type)">
           <span>{{ key.type }}</span>
+          <!--定制化的额外文字-->
           <template v-if="key.type === `(`">
             <span v-if="extraLeftBracket > 0" class="extra-left-bracket">{{ extraLeftBracket }}</span>
           </template>
@@ -43,7 +44,7 @@ export default {
           class: [], // 类名
           disableds: [], // 禁用状态对应的进制
           canKeyIn: true, // 是否支持键盘输入
-          keyValue: `<`, //  键盘输入对应的键位
+          keyValue: [`<`], //  键盘输入对应的键位
           callback: this.keyMove // 点击回调
         },
         {
@@ -51,7 +52,7 @@ export default {
           class: [],
           disableds: [],
           canKeyIn: true,
-          keyValue: `>`,
+          keyValue: [`>`],
           callback: this.keyMove
         },
         {
@@ -59,7 +60,7 @@ export default {
           class: [],
           disableds: [],
           canKeyIn: true,
-          keyValue: `|`,
+          keyValue: [`|`],
           callback: this.keyBitwise
         },
         {
@@ -67,7 +68,7 @@ export default {
           class: [],
           disableds: [],
           canKeyIn: true,
-          keyValue: `^`,
+          keyValue: [`^`],
           callback: this.keyBitwise
         },
         {
@@ -75,7 +76,7 @@ export default {
           class: [],
           disableds: [],
           canKeyIn: true,
-          keyValue: `~`,
+          keyValue: [`~`],
           callback: this.keyBitwise
         },
         {
@@ -83,7 +84,7 @@ export default {
           class: [],
           disableds: [],
           canKeyIn: true,
-          keyValue: `&`,
+          keyValue: [`&`],
           callback: this.keyBitwise
         },
         {
@@ -98,7 +99,7 @@ export default {
           class: [],
           disableds: [],
           canKeyIn: true,
-          keyValue: `%`,
+          keyValue: [`%`],
           callback: this.keyMod
         },
         {
@@ -106,7 +107,7 @@ export default {
           class: [`key-ce`],
           disableds: [],
           canKeyIn: true,
-          keyValue: `del`,
+          keyValue: [`del`],
           callback: this.keyCe
         },
         {
@@ -114,14 +115,14 @@ export default {
           class: [`key-reset`],
           disableds: [],
           canKeyIn: false,
-          callback: this.keyReset
+          callback: this.keyClear
         },
         {
           type: `←`,
           class: [`key-backspace`],
           disableds: [],
           canKeyIn: true,
-          keyValue: `backspace`,
+          keyValue: [`backspace`],
           callback: this.keyBackspace
         },
         {
@@ -129,7 +130,7 @@ export default {
           class: [`key-arithmetic`],
           disableds: [],
           canKeyIn: true,
-          keyValue: `/`,
+          keyValue: [`/`],
           callback: this.keyArithmetic
         },
         {
@@ -137,7 +138,7 @@ export default {
           class: [`key-letter`],
           disableds: [`dec`, `oct`, `bin`],
           canKeyIn: true,
-          keyValue: `A`,
+          keyValue: [`A`, `a`],
           callback: this.keyValue
         },
         {
@@ -145,7 +146,7 @@ export default {
           class: [`key-letter`],
           disableds: [`dec`, `oct`, `bin`],
           canKeyIn: true,
-          keyValue: `B`,
+          keyValue: [`B`, `b`],
           callback: this.keyValue
         },
         {
@@ -153,7 +154,7 @@ export default {
           class: [`key-number`],
           disableds: [`bin`],
           canKeyIn: true,
-          keyValue: `7`,
+          keyValue: [`7`],
           callback: this.keyValue
         },
         {
@@ -161,7 +162,7 @@ export default {
           class: [`key-number`],
           disableds: [`oct`, `bin`],
           canKeyIn: true,
-          keyValue: `8`,
+          keyValue: [`8`],
           callback: this.keyValue
         },
         {
@@ -169,7 +170,7 @@ export default {
           class: [`key-number`],
           disableds: [`oct`, `bin`],
           canKeyIn: true,
-          keyValue: `9`,
+          keyValue: [`9`],
           callback: this.keyValue
         },
         {
@@ -177,7 +178,7 @@ export default {
           class: [`key-arithmetic`],
           disableds: [],
           canKeyIn: true,
-          keyValue: `*`,
+          keyValue: [`*`],
           callback: this.keyArithmetic
         },
         {
@@ -185,7 +186,7 @@ export default {
           class: [`key-letter`],
           disableds: [`dec`, `oct`, `bin`],
           canKeyIn: true,
-          keyValue: `C`,
+          keyValue: [`C`, `c`],
           callback: this.keyValue
         },
         {
@@ -193,7 +194,7 @@ export default {
           class: [`key-letter`],
           disableds: [`dec`, `oct`, `bin`],
           canKeyIn: true,
-          keyValue: `D`,
+          keyValue: [`D`, `d`],
           callback: this.keyValue
         },
         {
@@ -201,7 +202,7 @@ export default {
           class: [`key-number`],
           disableds: [`bin`],
           canKeyIn: true,
-          keyValue: `4`,
+          keyValue: [`4`],
           callback: this.keyValue
         },
         {
@@ -209,7 +210,7 @@ export default {
           class: [`key-number`],
           disableds: [`bin`],
           canKeyIn: true,
-          keyValue: `5`,
+          keyValue: [`5`],
           callback: this.keyValue
         },
         {
@@ -217,7 +218,7 @@ export default {
           class: [`key-number`],
           disableds: [`bin`],
           canKeyIn: true,
-          keyValue: `6`,
+          keyValue: [`6`],
           callback: this.keyValue
         },
         {
@@ -225,7 +226,7 @@ export default {
           class: [`key-arithmetic`],
           disableds: [],
           canKeyIn: true,
-          keyValue: `-`,
+          keyValue: [`-`],
           callback: this.keyArithmetic
         },
         {
@@ -233,7 +234,7 @@ export default {
           class: [`key-letter`],
           disableds: [`dec`, `oct`, `bin`],
           canKeyIn: true,
-          keyValue: `E`,
+          keyValue: [`E`, `e`],
           callback: this.keyValue
         },
         {
@@ -241,7 +242,7 @@ export default {
           class: [`key-letter`],
           disableds: [`dec`, `oct`, `bin`],
           canKeyIn: true,
-          keyValue: `F`,
+          keyValue: [`F`, `f`],
           callback: this.keyValue
         },
         {
@@ -249,7 +250,7 @@ export default {
           class: [`key-number`],
           disableds: [],
           canKeyIn: true,
-          keyValue: `1`,
+          keyValue: [`1`],
           callback: this.keyValue
         },
         {
@@ -257,7 +258,7 @@ export default {
           class: [`key-number`],
           disableds: [`bin`],
           canKeyIn: true,
-          keyValue: `2`,
+          keyValue: [`2`],
           callback: this.keyValue
         },
         {
@@ -265,7 +266,7 @@ export default {
           class: [`key-number`],
           disableds: [`bin`],
           canKeyIn: true,
-          keyValue: `3`,
+          keyValue: [`3`],
           callback: this.keyValue
         },
         {
@@ -273,7 +274,7 @@ export default {
           class: [`key-arithmetic`],
           disableds: [],
           canKeyIn: true,
-          keyValue: `+`,
+          keyValue: [`+`],
           callback: this.keyArithmetic
         },
         {
@@ -281,7 +282,7 @@ export default {
           class: [`key-bracket`],
           disableds: [],
           canKeyIn: true,
-          keyValue: `(`,
+          keyValue: [`(`],
           callback: this.keyLeftBracket
         },
         {
@@ -289,7 +290,7 @@ export default {
           class: [`key-bracket`],
           disableds: [],
           canKeyIn: true,
-          keyValue: `)`,
+          keyValue: [`)`],
           callback: this.keyRightBracket
         },
         {
@@ -304,7 +305,7 @@ export default {
           class: [`key-number`],
           disableds: [],
           canKeyIn: true,
-          keyValue: `0`,
+          keyValue: [`0`],
           callback: this.keyValue
         },
         {
@@ -319,13 +320,13 @@ export default {
           class: [`key-arithmetic`],
           disableds: [],
           canKeyIn: true,
-          keyValue: `enter`,
+          keyValue: [`enter`],
           callback: this.keyEqual
         }
       ],
       // 按照MDN文档(https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Operator_Precedence)的优先级序号排序
       symbolPriority: {
-        '(': 20, // 左括号优先级最高，输入左括号时表达式应为空
+        '(': 20, // 左括号优先级最高，输入左括号时临时表达式应为空
         'Not': 16,
         '×': 14,
         '÷': 14,
@@ -337,10 +338,9 @@ export default {
         'And': 9,
         'Xor': 8,
         'Or': 7,
-        ')': 0 // 此处特例，因为输入右括号时，将右括号优先级设置为最小，才能按照func:setTempValue的规则拿到前面一串表达式
+        ')': 0 // 此处特例，因为输入右括号时，将右括号优先级设置为最小，才能按照计算临时表达式的规则拿到前面一串表达式
       },
-      isRotateMove: false, // 是否循环位移,
-      extraLeftBracket: 0 // 左括号比右括号多的数量
+      isRotateMove: false // 是否循环位移
     }
   },
 
@@ -354,7 +354,7 @@ export default {
       'bitLengthCount'
     ]),
 
-    // 判断符号是否可以直接替换
+    // 判断最后的符号是否可以直接替换
     canReplace () {
       // 若当前二进制为未输入值状态，且表达式最后一项是可被直接替换的符号
       let lastExpression = this.expressions[this.expressions.length - 1]
@@ -375,6 +375,26 @@ export default {
     // 处于按下'='后的状态
     hasEqual () {
       return !this.expressions.length && !!this.tempValue
+    },
+
+    // 左括号比右括号多的数量
+    extraLeftBracket () {
+      let extraLeftBracket = 0
+      for (let expression of this.expressions) {
+        if (expression.type === `bracket`) {
+          if (expression.value === `(`) {
+            extraLeftBracket++
+          } else if (expression.value === `)`) {
+            extraLeftBracket--
+          }
+        }
+      }
+      return extraLeftBracket
+    },
+
+    // 表达式最后一位为右括号
+    isRightBracketEnd () {
+      return !!this.expressions.length && this.expressions[this.expressions.length - 1].value === `)`
     }
   },
 
@@ -388,6 +408,7 @@ export default {
 
   watch: {
     value (newValue) {
+      // 位于全键盘，才进行键盘监听
       if (newValue) {
         this.initMousetrap()
       } else {
@@ -432,17 +453,18 @@ export default {
     keyRotateMove (direction) {
       // 先补全位数
       let completeValue = setPrefixBit(this.binValue, this.bitLengthCount)
+      // 进行移动
       let newValue
       if (direction === `RoL`) { // 循环左移
         newValue = completeValue.slice(1, completeValue.length).concat(completeValue.slice(0, 1))
-      } else if (direction === `RoR`) {
+      } else if (direction === `RoR`) { // 循环右移
         newValue = completeValue.slice(completeValue.length - 1, completeValue.length).concat(completeValue.slice(0, completeValue.length - 1))
       }
       if (newValue.slice(0, 1) === `0`) {
         // 正数去除前面多余的0后存储
         this.$store.dispatch('setBinValue', deletePrefixZero(newValue))
       } else {
-        // 负数去除第一位的1，取反加1，求出十进制对应的正值，加上-号存储
+        // js无法识别第一位为1代表负数，负数需要去除第一位的1，取反加1，求出十进制对应的正值，加上-号存储
         this.$store.dispatch('setBinValue', inversePlusOne(newValue.slice(1, newValue.length), true))
       }
     },
@@ -512,18 +534,17 @@ export default {
     },
 
     // 重置
-    keyReset () {
-      this.clearBinValue()
-      this.clearExpressions()
-      this.clearTempValue()
-      this.extraLeftBracket = 0
+    keyClear () {
+      this.reset()
     },
 
     // 退格
     keyBackspace () {
       let length = this.systemValue.length
+      // 当除去符号位后，只有一位时需要变为0
+      let isToZero = isNegative(this.systemValue) ? length > 2 : length > 1
       // 将systemValue退格1位后，转化成二进制存储
-      let systemValue = length > 1 ? this.systemValue.slice(0, length - 1) : `0`
+      let systemValue = isToZero ? this.systemValue.slice(0, length - 1) : `0`
       this.setBinValue(systemValue, SYSTEM[this.systemType])
     },
 
@@ -538,8 +559,9 @@ export default {
 
     // 输入值
     keyValue (value) {
+      // 计算完成时，或表达式最后一位是值（兼容按位非）时，需要重置
       if (this.hasEqual || this.expressions.length && this.expressions[this.expressions.length - 1].type === `value`) {
-        this.keyReset()
+        this.reset()
       }
       // 将systemValue拼接输入的值后，转化为二进制存储
       let systemValue = this.systemValue === `0` ? value : this.systemValue.concat(value)
@@ -552,9 +574,7 @@ export default {
     // 左括号
     keyLeftBracket () {
       // 表达式最后为右括号时，不增加左括号
-      let lastExpression = this.expressions[this.expressions.length - 1]
-      if (lastExpression && lastExpression.value === `)`) return
-      this.extraLeftBracket++
+      if (this.isRightBracketEnd) return
       this.addExpression({
         type: `bracket`,
         value: `(`
@@ -564,13 +584,12 @@ export default {
 
     // 右括号
     keyRightBracket () {
-      // 左括号数量无法匹配时，不增加右括号
+      // 左括号数量不足以匹配时，不增加右括号
       if (this.extraLeftBracket <= 0) return
       this.handleExpression({
         type: `bracket`,
         value: `)`
       })
-      this.extraLeftBracket--
       this.setTempValue()
     },
 
@@ -591,10 +610,10 @@ export default {
       if (this.canReplace) {
         // 替换符号
         this.replaceExpression(expression)
-      } else if (this.expressions.length && this.expressions[this.expressions.length - 1].value === `)`) { // 最后为右括号时，直接插入符号
+      } else if (this.isRightBracketEnd) { // 最后为右括号时，直接插入符号
         this.addExpression(expression)
       } else {
-        // 加上对按位非的判断条件
+        // ||后部分是对按位非的判断条件，此时不应该将当前值插入表达式
         if (!this.expressions.length || this.expressions.length && this.expressions[this.expressions.length - 1].type !== `value`) {
           // 先将当前二进制插入表达式，再插入符号
           this.addExpression({
@@ -634,7 +653,7 @@ export default {
 
     // 计算临时结果
     setTempValue () {
-      // 找出需要临时计算结果的表达式。规则为以数组尾的运算符作为衡量，向前遍历，直到遇到优先级小于衡量运算符优先级的为止，中间这段记为临时计算的表达式。如果遍历过程中遇到右括号，应该记录起来，且此时不再比较运算符优先级，遇到左括号则抵消，如果遇到没有匹配的左括号，则直接中断遍历。这段找表达式的方法扩展为分析多段表达式后，也可以作为替代eval计算的方式。
+      // 找出需要临时计算结果的表达式，规则为：以数组尾的运算符作为衡量，向前遍历，直到遇到优先级小于衡量运算符优先级的为止，中间这段记为临时计算的表达式。可以简单理解为如图所示： < [>=] current，图示里中括号框起来的部分为优先级大于等于当前运算符优先级的，是优先计算的表达式。如果遍历过程中遇到右括号，应该记录起来，遇到左括号则抵消，且此时不再比较运算符优先级，因为括号内部会优先运算，得到的值会纳入临时表达式中。如果遇到没有右括号匹配的左括号，表示临时表达式到此结束，直接中断遍历。这段找表达式的方法扩展为分析多段表达式后，也可以作为替代eval来计算整段表达式的方式。
       let lastPosition
       for (lastPosition = this.expressions.length - 1; lastPosition >= 0; lastPosition--) {
         if (this.expressions[lastPosition].type !== `value`) {
@@ -643,17 +662,17 @@ export default {
       }
       let currentPriority = this.symbolPriority[this.expressions[lastPosition].value]
       let position = lastPosition - 1
-      let rightBracket = 0
+      let extraRightBracket = 0
       while (position >= 0) {
         if (this.expressions[position].value === `)`) {
-          rightBracket++
+          extraRightBracket++
         } else if (this.expressions[position].value === `(`) {
-          if (rightBracket <= 0) {
+          if (extraRightBracket <= 0) {
             break
           }
-          rightBracket--
+          extraRightBracket--
         }
-        if (rightBracket <= 0) {
+        if (extraRightBracket <= 0) {
           let priority = this.symbolPriority[this.expressions[position].value]
           if (priority && priority < currentPriority) {
             break
@@ -662,7 +681,13 @@ export default {
         position--
       }
       // 按位非比较特殊，是将符号插入到数字前，所以截取的时候需要多截一个表达式
-      let expressions = this.expressions.slice(position + 1, this.expressions[lastPosition].value === `Not` ? this.expressions.length : this.expressions.length - 1)
+      let startPosition = position > -1 // 若为-1，则表示找到表达式头，仍未找到优先级能够截取临时表达式的符号
+        ? this.expressions[position].value === `Not`
+          ? position
+          : position + 1
+        : 0
+      let endPosition = this.expressions[lastPosition].value === `Not` ? this.expressions.length : this.expressions.length - 1
+      let expressions = this.expressions.slice(startPosition, endPosition)
       this.keyEqual(expressions)
     },
 
@@ -674,7 +699,7 @@ export default {
     keyEqual (value) {
       let isTemp = value !== `=`
       if (!isTemp) {
-        // 先将当前二进制插入表达式，再进行计算
+        // 表达式最后一位不是值或右括号时，先将当前二进制插入表达式，再进行计算
         let lastExpression = this.expressions[this.expressions.length - 1]
         let type = lastExpression && lastExpression.type || null
         if (type !== `value` && type !== `bracket`) {
@@ -689,7 +714,6 @@ export default {
             type: `bracket`,
             value: `)`
           })
-          this.extraLeftBracket--
         }
       }
       let convertExpressions = isTemp ? value : this.expressions
@@ -741,15 +765,16 @@ export default {
 
     // 判断是否溢出
     handleResult (result) {
-      let binValue = result.toString(SYSTEM[`bin`])
-      let length = binValue.length
+      let binValue = convertSystem(result, SYSTEM[`dec`], SYSTEM[`bin`])
+      let length = isNegative(binValue) ? binValue.length - 1 :binValue.length
       // 获取对应的位数
       if (length > this.bitLengthCount) {
-        binValue = binValue.slice(-this.bitLengthCount, length)
+        // 从字符串尾部开始截取
+        binValue = binValue.slice(-this.bitLengthCount)
       }
       length = binValue.length
       // 处理负数
-      if (length === this.bitLengthCount && binValue.charAt(0) === `1`) {
+      if (length === this.bitLengthCount && binValue[0] === `1`) {
         // 舍去符号位，按位取反再加1，求出十进制对应的正值，再加上‘-’号存储
         binValue = inversePlusOne(absValue(binValue), true)
       }
@@ -761,11 +786,17 @@ export default {
       return disableds.some(systemType => systemType === this.systemType)
     },
 
-    // key的样式
+    // key的动态样式
     keyClass (key) {
       const switchMove = key.type === `↑` && this.isRotateMove ? 'active' : ''
       const classList = [switchMove]
       return classList
+    },
+
+    reset () {
+      this.clearBinValue()
+      this.clearExpressions()
+      this.clearTempValue()
     }
   }
 }
@@ -822,7 +853,7 @@ export default {
   }
   .extra-left-bracket {
     position: absolute;
-    top: 28px;
+    top: 50%;
     left: calc(50% + 5px);
     font-size: 13px;
     font-weight: bold;

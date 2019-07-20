@@ -35,14 +35,17 @@ export default {
       'bitLengthCount'
     ]),
 
+    // 符号位
     signPosition () {
       return this.totalLength - this.bitLengthCount
     },
 
+    // byte时的符号位
     byteSignPosition () {
       return this.totalLength - BIT_LENGTH[`BYTE`]
     },
 
+    // 当前位数下是负数，即符号位为1
     isNegative () {
       return this.showBinValue[this.signPosition] === `1`
     }

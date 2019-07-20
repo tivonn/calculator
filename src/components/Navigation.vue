@@ -40,6 +40,7 @@ export default {
 
   data () {
     return {
+      defaultBitLength: `QWORD`,
       bitLengthOptions: { // 此处需要循环切换，采用类似链表指针的思想，next记录要切换的下一项。如果使用数组存储options，在切换时还需判断index是否超出。
         'QWORD': {
           type: `QWORD`,
@@ -80,14 +81,17 @@ export default {
       this.setBitLength()
     },
 
+    // 切换全键盘/bit视图
     toggleKeyboard (value) {
       this.$emit(`toggle-keyboard`, value)
     },
 
+    // 设置默认位数
     setBitLength () {
-      this.$store.dispatch('setBitLength', this.bitLengthOptions[`QWORD`])
+      this.$store.dispatch('setBitLength', this.bitLengthOptions[this.defaultBitLength])
     },
 
+    // 切换位数
     switchBitLength () {
       this.$store.dispatch('setBitLength', this.bitLengthOptions[this.bitLength.next])
     }
