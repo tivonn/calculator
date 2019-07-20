@@ -22,7 +22,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import { SYSTEM } from '@/utils/enum'
-import { convertSystem, setPrefixBit, deletePrefixZero, inversePlusOne, concat0B, isNegative, absValue, calculate } from '@/utils'
+import { convertSystem, setPrefixBit, deletePrefixZero, inversePlusOne, concat0B, isNegative, absValue, calculate, handleOverflow } from '@/utils'
 import Mousetrap from 'mousetrap'
 
 export default {
@@ -773,19 +773,7 @@ export default {
     // 判断是否溢出
     handleResult (result) {
       let binValue = convertSystem(result, SYSTEM[`dec`], SYSTEM[`bin`])
-      let length = isNegative(binValue) ? binValue.length - 1 : binValue.length
-      // 获取对应的位数
-      if (length > this.bitLengthCount) {
-        // 从字符串尾部开始截取
-        binValue = binValue.slice(-this.bitLengthCount)
-      }
-      length = binValue.length
-      // 处理负数
-      if (length === this.bitLengthCount && binValue[0] === `1`) {
-        // 舍去符号位，按位取反再加1，求出十进制对应的正值，再加上‘-’号存储
-        binValue = inversePlusOne(absValue(binValue), true)
-      }
-      return binValue
+      return handleOverflow(binValue, this.bitLengthCount)
     },
 
     // 判断键位禁用状态

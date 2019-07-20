@@ -4,15 +4,15 @@
     <template v-if="memories.length">
       <ul class="memory-list">
         <li
-          v-for="(memory, index) in showMemories"
+          v-for="(memory, index) in memories"
           :key="memory.id"
           class="memory-item"
           @click="setBinValue(memory)">
-          <p class="memory-value">{{ memory.value }}</p>
+          <p class="memory-value">{{ showMemoryValue(memory.value) }}</p>
           <div>
-            <span class="operation-item" @click="deleteMemory(index)">MC</span>
-            <span class="operation-item" @click="updateMemory(`+`, index)">M+</span>
-            <span class="operation-item" @click="updateMemory(`-`, index)">M-</span>
+            <span class="operation-item" @click.stop="deleteMemory(index)">MC</span>
+            <span class="operation-item" @click.stop="updateMemory(`+`, index)">M+</span>
+            <span class="operation-item" @click.stop="updateMemory(`-`, index)">M-</span>
           </div>
         </li>
       </ul>
@@ -29,7 +29,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import { SYSTEM } from '@/utils/enum'
-import { convertSystem, concat0B, calculate } from '@/utils'
+import { convertSystem, concat0B, calculate, handleOverflow } from '@/utils'
 
 export default {
   name: 'Memory',
@@ -38,16 +38,17 @@ export default {
     ...mapGetters([
       'binValue',
       'systemType',
+      'bitLengthCount',
       'memories'
-    ]),
-
-    showMemories () {
-      return this.memories.map(memory => {
-        return {
-          value: convertSystem(memory.value, SYSTEM[`bin`], SYSTEM[this.systemType])
-        }
-      })
-    }
+    ])
+    //
+    // showMemories () {
+    //   return this.memories.map(memory => {
+    //     return {
+    //       value: convertSystem(memory.value, SYSTEM[`bin`], SYSTEM[this.systemType])
+    //     }
+    //   })
+    // }
   },
 
   methods: {
@@ -60,7 +61,7 @@ export default {
 
     // 选择memory的值作为binValue
     setBinValue (memory) {
-      this.$store.dispatch('setBinValue', convertSystem(memory.value, SYSTEM[this.systemType], SYSTEM[`bin`]))
+      this.$store.dispatch('setBinValue', memory.value)
     },
 
     deleteMemory (index) {
@@ -80,6 +81,12 @@ export default {
 
     resetMemory () {
       this.$store.dispatch('setMemories', [])
+    },
+
+    // 用于展示的值
+    showMemoryValue (value) {
+      // 先处理溢出，再转换进制
+      return convertSystem(handleOverflow(value, this.bitLengthCount), SYSTEM[`bin`], SYSTEM[this.systemType])
     }
   }
 }
