@@ -1,4 +1,4 @@
-module.export = {
+module.exports = {
   baseUrl: '/',
   outputDir: 'dist',
   assetsDir: 'static',

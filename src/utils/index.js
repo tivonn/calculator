@@ -66,22 +66,20 @@ export const convertMinus = expressions => {
 
 // 计算
 export const calculate = expressions => {
+  // eslint-disable-next-line
   return eval(convertMinus(expressions))
 }
 
 // 处理溢出
 export const handleOverflow = (value, bitLengthCount) => {
-  let length = isNegative(value) ? value.length - 1 : value.length
-  // 获取对应的位数
-  if (length > bitLengthCount) {
-    // 从字符串尾部开始截取
-    value = value.slice(-bitLengthCount, value.length)
-  }
-  length = value.length
+  // 原本的正负会决定溢出后是否需要添加负号
+  let isNegativeValue = isNegative(value)
+  // 从字符串尾部开始截取
+  value = value.slice(-bitLengthCount, value.length)
   // 处理负数
-  if (length === bitLengthCount && value[0] === `1`) {
-    // 舍去符号位，按位取反再加1，求出十进制对应的正值，再加上‘-’号存储
-    value = inversePlusOne(absValue(value), true)
+  if (value.length === bitLengthCount && value[0] === `1`) {
+    // 舍去符号位，按位取反再加1，求出十进制对应的正值，再根据isNegativeValue加上负号存储
+    value = inversePlusOne(absValue(value), !isNegativeValue)
   }
   return value
 }

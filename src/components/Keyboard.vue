@@ -22,7 +22,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import { SYSTEM } from '@/utils/enum'
-import { convertSystem, setPrefixBit, deletePrefixZero, inversePlusOne, concat0B, isNegative, absValue, calculate, handleOverflow } from '@/utils'
+import { convertSystem, setPrefixBit, deletePrefixZero, inversePlusOne, concat0B, isNegative, calculate, handleOverflow } from '@/utils'
 import Mousetrap from 'mousetrap'
 
 export default {
