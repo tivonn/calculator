@@ -64,7 +64,11 @@ export default {
     },
 
     updateMemory (arithmetic, index) {
-      let newValue = convertSystem(calculate(`${concat0B(this.memories[index].value)}${arithmetic}${concat0B(this.binValue)}`), SYSTEM[`dec`], SYSTEM[`bin`])
+      let leftValue = concat0B(this.memories[index].value)
+      let rightValue = concat0B(this.binValue)
+      let calculateResult = calculate(`${leftValue}${arithmetic}${rightValue}`)
+      let binResult = convertSystem(calculateResult, SYSTEM[`dec`], SYSTEM[`bin`])
+      let newValue = handleOverflow(binResult, this.bitLengthCount)
       this.$store.dispatch('updateMemory', {
         id: this.memories[index].id,
         newValue

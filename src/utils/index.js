@@ -40,11 +40,7 @@ export const inversePlusOne = (value, needNegative) => {
 
 // 给二进制数字加上0B
 export const concat0B = (value) => {
-  if (isNegative(value)) {
-    return `-0B${absValue(value)}`
-  } else {
-    return `0B${value}`
-  }
+  return isNegative(value) ? `-0B${absValue(value)}` : `0B${value}`
 }
 
 // 判断是否为负数
@@ -54,9 +50,7 @@ export const isNegative = value => {
 
 // 取绝对值
 export const absValue = systemValue => {
-  return isNegative(systemValue)
-    ? systemValue.slice(1, systemValue.length)
-    : systemValue
+  return isNegative(systemValue) ? systemValue.slice(1, systemValue.length) : systemValue
 }
 
 // 处理连续的减号，将其变为+，否则无法进行eval计算
