@@ -91,21 +91,33 @@ export default {
 .result-container {
   .expressions {
     height: 6vh;
+    padding: 0 5px;
     line-height: 6vh;
+    overflow-x: auto;
+    overflow-y: hidden;
     font-size: 16px;
     text-align: right;
     color: #5c5c5c;
+    white-space: nowrap;
   }
   .system-value {
     height: 12vh;
     line-height: 8vh;
-    font-size: 46px;
     text-align: right;
     font-weight: bold;
+    @media (min-width: 1366px), (min-height: 1000px) {
+      font-size: 56px;
+    }
+    @media (min-width: 700px) and (max-width: 1365px), (min-height: 800px) and (max-height: 999px) {
+      font-size: 34px;
+    }
+    @media (max-width: 699px), (max-height: 799px) {
+      font-size: 28px;
+    }
   }
   .system-item {
     height: 5vh;
-    line-height: 5vh;
+    line-height: 1.4;
     border-left: 3px solid #e6e6e6;
     cursor: pointer;
     &:hover {

@@ -58,14 +58,34 @@ export default {
 <style lang="scss">
 #app {
   width: 100vw;
-  min-width: 800px;
+  min-width: 400px;
   height: 100vh;
   background-color: #e6e6e6;
   overflow: auto;
   font-family: PingFangSC, 微软雅黑, Helvetica, Arial, sans-serif;
   .calculator-container {
-    width: calc(100% - 400px);
     float: left;
+    @media (min-width: 960px) {
+      width: calc(100% - 400px);
+    }
+    @media (min-width: 700px) and (max-width: 959px) {
+      width: 60%;
+    }
+    @media (max-width: 699px) {
+      width: 100%;
+    }
+  }
+  .memory-container {
+    float: left;
+    @media (min-width: 960px) {
+      width: 400px;
+    }
+    @media (min-width: 700px) and (max-width: 959px) {
+      width: 40%;
+    }
+    @media (max-width: 699px) {
+      width: 100%;
+    }
   }
 }
 </style>
