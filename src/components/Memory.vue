@@ -49,6 +49,20 @@ export default {
         id: new Date().getTime(), // 使用当前时间戳作为id
         value: this.binValue
       }].concat(this.memories))
+      this.$nextTick(() => { this.addAnimation() })
+    },
+
+    addAnimation () {
+      let el = document.querySelectorAll('.memory-item')[0]
+      el.style.height = `0`
+      el.style.opacity = `0`
+      // 动画队列
+      setTimeout(() => {
+        el.style.height = `100px`
+      }, 100)
+      setTimeout(() => {
+        el.style.opacity = `1`
+      }, 600)
     },
 
     // 选择memory处理过溢出后的值作为binValue
@@ -57,10 +71,18 @@ export default {
     },
 
     deleteMemory (index) {
+      this.deleteAnimation(index)
       // 为了不直接修改到state的数据，先浅拷贝一次再进行赋值
-      let memories = this.memories.slice()
-      memories.splice(index, 1)
-      this.$store.dispatch('setMemories', memories)
+      setTimeout(() => { // 延迟500ms执行是为了让动画执行完毕
+        let memories = this.memories.slice()
+        memories.splice(index, 1)
+        this.$store.dispatch('setMemories', memories)
+      }, 500)
+    },
+
+    deleteAnimation (index) {
+      let el = document.querySelectorAll('.memory-item')[index]
+      el.style.height = `0`
     },
 
     updateMemory (arithmetic, index) {
@@ -90,9 +112,7 @@ export default {
 
 <style lang="scss">
 .memory-container {
-  width: 400px;
   height: 99vh;
-  float: left;
   position: relative;
   padding-left: 20px;
   .memory-title {
@@ -109,9 +129,10 @@ export default {
     overflow: auto;
   }
   .memory-item {
-    height: 100px;
-    padding: 0 20px;
+    padding-right: 10px;
+    overflow: hidden;
     text-align: right;
+    transition: height .5s;
     cursor: pointer;
     &:hover {
       background-color: #f2f2f2;
@@ -126,7 +147,7 @@ export default {
   .memory-value {
     height: 60px;
     line-height: 70px;
-    font-size: 22px;
+    font-size: 20px;
     font-weight: bold;
   }
   .operation-item {
