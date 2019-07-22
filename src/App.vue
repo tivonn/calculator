@@ -68,10 +68,10 @@ export default {
     @media (min-width: 960px) {
       width: calc(100% - 400px);
     }
-    @media (min-width: 700px) and (max-width: 959px) {
+    @media (min-width: 700px) and (max-width: 960px) {
       width: 60%;
     }
-    @media (max-width: 699px) {
+    @media (max-width: 700px) {
       width: 100%;
     }
   }
@@ -80,10 +80,10 @@ export default {
     @media (min-width: 960px) {
       width: 400px;
     }
-    @media (min-width: 700px) and (max-width: 959px) {
+    @media (min-width: 700px) and (max-width: 960px) {
       width: 40%;
     }
-    @media (max-width: 699px) {
+    @media (max-width: 700px) {
       width: 100%;
     }
   }

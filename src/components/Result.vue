@@ -101,23 +101,29 @@ export default {
     white-space: nowrap;
   }
   .system-value {
-    height: 12vh;
+    height: 8vh;
+    padding: 0 5px;
     line-height: 8vh;
+    overflow-x: auto;
+    overflow-y: hidden;
     text-align: right;
     font-weight: bold;
+    white-space: nowrap;
     @media (min-width: 1366px), (min-height: 1000px) {
-      font-size: 56px;
+      font-size: 60px;
     }
-    @media (min-width: 700px) and (max-width: 1365px), (min-height: 800px) and (max-height: 999px) {
-      font-size: 34px;
+    @media (min-width: 700px) and (max-width: 1366px), (min-height: 800px) and (max-height: 1000px) {
+      font-size: 33px;
     }
-    @media (max-width: 699px), (max-height: 799px) {
+    @media (max-width: 700px), (max-height: 800px) {
       font-size: 28px;
     }
   }
+  .system-list {
+    margin-top: 4vh;
+  }
   .system-item {
-    height: 5vh;
-    line-height: 1.4;
+    position: relative;
     border-left: 3px solid #e6e6e6;
     cursor: pointer;
     &:hover {
@@ -128,18 +134,24 @@ export default {
     }
   }
   .system-type, .system-count {
+    display: inline-block;
     float: left;
     font-size: 14px;
     font-weight: bold;
   }
   .system-type {
     width: 55px;
-    display: inline-block;
+    height: 5vh;
+    line-height: 5vh;
     text-align: center;
   }
   .system-count {
     width: calc(100% - 55px);
-    display: inline-block;
+    position: absolute;
+    top: 50%;
+    left: 55px;
+    line-height: 1.4;
+    transform: translateY(-50%);
   }
 }
 </style>
