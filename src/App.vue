@@ -1,5 +1,5 @@
 <template>
-  <div id="app" @click="showSidebar = false">
+  <div id="app" @click="showSidebar = false; showMemory = false;">
     <div class="calculator-container">
       <heading @show-sidebar="showSidebar = true"></heading>
       <sidebar :show-sidebar="showSidebar">
@@ -8,12 +8,16 @@
       <navigation
         :show-keyboard="showKeyboard"
         @toggle-keyboard="toggleKeyboard"
-        @ms="ms">
+        @ms="ms"
+        @toggle-ms="showMemory = !showMemory">
       </navigation>
       <keyboard v-show="showKeyboard" v-model="showKeyboard"></keyboard>
       <bit v-show="!showKeyboard"></bit>
     </div>
-    <memory ref="memory"></memory>
+    <memory
+      ref="memory"
+      :show-memory="showMemory">
+    </memory>
   </div>
 </template>
 
@@ -32,15 +36,12 @@ export default {
   data () {
     return {
       showSidebar: false,
-      showKeyboard: true
+      showKeyboard: true,
+      showMemory: false
     }
   },
 
   methods: {
-    test () {
-      console.log(1)
-    },
-
     // 切换全键盘和bit视图
     toggleKeyboard (value) {
       this.showKeyboard = value
@@ -85,15 +86,26 @@ export default {
     }
   }
   .memory-container {
-    float: left;
     @media (min-width: 960px) {
       width: 400px;
+      float: left;
     }
     @media (min-width: 700px) and (max-width: 960px) {
       width: 40%;
+      float: left;
     }
     @media (max-width: 700px) {
       width: 100%;
+      height: 50vh;
+      display: none;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      z-index: 99;
+      background-color: #f4f4f4;
+      &.active {
+        display: block;
+      }
     }
   }
 }

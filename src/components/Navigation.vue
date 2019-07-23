@@ -20,6 +20,7 @@
     </span>
     <span class="function-item switch-bit-length" @click="switchBitLength">{{ bitLength.type }}</span>
     <span class="function-item" title="内存存储" @click="$emit(`ms`)">MS</span>
+    <span class="function-item toggle-ms" title="内存" @click.stop="$emit(`toggle-ms`)">M▾</span>
   </div>
 </template>
 
@@ -134,7 +135,17 @@ export default {
     }
   }
   .switch-bit-length {
-    width: calc(100% - 300px);
+    @media (min-width: 700px) {
+      width: calc(100% - 300px);
+    }
+    @media (max-width: 700px) {
+      width: calc(100% - 400px);
+    }
+  }
+  .toggle-ms {
+    @media (min-width: 700px) {
+      display: none;
+    }
   }
 }
 </style>

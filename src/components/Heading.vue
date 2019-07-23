@@ -1,6 +1,6 @@
 <template>
   <div class="heading-container">
-    <span class="show-sidebar" title="打开导航" @click.stop="$emit('show-sidebar')">
+    <span class="show-sidebar" title="打开导航" @click.stop="$emit(`show-sidebar`)">
       <svg class="iconfont">
         <use xlink:href="#icon-caidanlan"></use>
       </svg>

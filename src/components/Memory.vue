@@ -1,5 +1,5 @@
 <template>
-  <div class="memory-container">
+  <div class="memory-container" :class="{ 'active': showMemory }" @click.stop>
     <p class="memory-title">内存</p>
     <template v-if="memories.length">
       <ul class="memory-list">
@@ -33,6 +33,14 @@ import { convertSystem, convertValue, concat0B, calculate, handleOverflow } from
 
 export default {
   name: 'Memory',
+
+  props: {
+    showMemory: {
+      type: Boolean,
+      required: true,
+      default: false
+    }
+  },
 
   computed: {
     ...mapGetters([
@@ -119,7 +127,12 @@ export default {
 .memory-container {
   height: 99vh;
   position: relative;
-  padding-left: 20px;
+  @media (min-width: 700px) {
+    padding-left: 20px;
+  }
+  @media (max-width: 700px) {
+    padding-left: 0;
+  }
   .memory-title {
     width: 35px;
     height: 5vh;
@@ -127,11 +140,22 @@ export default {
     border-bottom: 3px solid #409eff;
     text-align: center;
     font-weight: bold;
+    @media (min-width: 700px) {
+      display: block;
+    }
+    @media (max-width: 700px) {
+      display: none;
+    }
   }
   .memory-list {
-    max-height: calc(92vh - 40px);
     margin-top: 2vh;
     overflow: auto;
+    @media (min-width: 700px) {
+      max-height: calc(92vh - 40px);
+    }
+    @media (max-width: 700px) {
+      max-height: calc(47vh - 40px);
+    }
   }
   .memory-item {
     padding-right: 10px;
@@ -140,11 +164,12 @@ export default {
     transition: height .5s;
     cursor: pointer;
     &:hover {
-      background-color: #f2f2f2;
+      background-color: #dadada;
       .operation-item {
-        border-color: #f2f2f2;
+        background-color: #f0f0f0;
         &:hover {
-          border-color: #e6e6e6;
+          background-color: #409eff;
+          color: #fff;
         }
       }
     }
@@ -160,12 +185,11 @@ export default {
     white-space: nowrap;
   }
   .operation-item {
-    width: 50px;
+    width: 45px;
     height: 36px;
     display: inline-block;
-    margin-left: 20px;
+    margin-left: 10px;
     line-height: 36px;
-    border: 2px solid #e6e6e6;
     font-size: 14px;
     text-align: center;
     font-weight: bold;
@@ -178,16 +202,18 @@ export default {
     right: 0;
     bottom: 0;
     line-height: 40px;
-    border: 3px solid #e6e6e6;
     text-align: center;
     cursor: pointer;
     &:hover {
-      border-color: #f2f2f2;
+      background-color: #dbdbdb;
     }
   }
   .no-memory {
     margin-top: 2vh;
     font-weight: bold;
+    @media (max-width: 700px) {
+      padding-left: 20px;
+    }
   }
 }
 </style>

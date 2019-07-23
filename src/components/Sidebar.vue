@@ -138,7 +138,7 @@ export default {
 .sidebar-container {
   width: 320px;
   height: 100vh;
-  position: absolute;
+  position: fixed;
   top: 0;
   left: -320px;
   z-index: 99;
