@@ -1,10 +1,12 @@
 <template>
-  <div id="app">
+  <div id="app" @click="showSidebar = false">
     <div class="calculator-container">
-      <heading></heading>
+      <heading @show-sidebar="showSidebar = true"></heading>
+      <sidebar :show-sidebar="showSidebar">
+      </sidebar>
       <result></result>
       <navigation
-        :showKeyboard="showKeyboard"
+        :show-keyboard="showKeyboard"
         @toggle-keyboard="toggleKeyboard"
         @ms="ms">
       </navigation>
@@ -17,6 +19,7 @@
 
 <script>
 import Heading from '@/components/Heading'
+import Sidebar from '@/components/Sidebar'
 import Result from '@/components/Result'
 import Navigation from '@/components/Navigation'
 import Keyboard from '@/components/Keyboard'
@@ -28,11 +31,16 @@ export default {
 
   data () {
     return {
+      showSidebar: false,
       showKeyboard: true
     }
   },
 
   methods: {
+    test () {
+      console.log(1)
+    },
+
     // 切换全键盘和bit视图
     toggleKeyboard (value) {
       this.showKeyboard = value
@@ -46,6 +54,7 @@ export default {
 
   components: {
     Heading,
+    Sidebar,
     Result,
     Navigation,
     Keyboard,
