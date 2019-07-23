@@ -373,9 +373,9 @@ export default {
       return -Math.pow(2, this.bitLengthCount - 1)
     },
 
-    // 表达式最后一位为值
+    // 表达式最后一位是值
     isValueEnd () {
-      return !!this.expressions.length && this.expressions[this.expressions.length - 1].type === `value`
+      return this.isSymbolEnd('type', `value`)
     },
 
     // 左括号比右括号多的数量
@@ -385,7 +385,7 @@ export default {
 
     // 表达式最后一位为右括号
     isRightBracketEnd () {
-      return !!this.expressions.length && this.expressions[this.expressions.length - 1].value === `)`
+      return this.isSymbolEnd('value', `)`)
     }
   },
 
@@ -419,7 +419,8 @@ export default {
     // 键盘监听
     initMousetrap () {
       for (let key of this.keys) {
-        if (key.canKeyIn) { // 存在键盘事件时再绑定
+        // 存在键盘事件时再绑定
+        if (key.canKeyIn) {
           Mousetrap.bind(key.keyValue, () => {
             // 判断当前进制是否为禁用状态
             if (key.disableds.some(disabled => disabled === this.systemType)) return
@@ -453,12 +454,13 @@ export default {
       } else if (direction === `RoR`) { // 循环右移
         newValue = completeValue.slice(completeValue.length - 1, completeValue.length).concat(completeValue.slice(0, completeValue.length - 1))
       }
-      if (newValue.slice(0, 1) === `0`) {
+      if (newValue[0] === `0`) {
         // 正数去除前面多余的0后存储
         this.$store.dispatch('setBinValue', deletePrefixZero(newValue))
       } else {
         // js无法识别第一位为1代表负数，负数需要去除第一位的1，取反加1，求出十进制对应的正值，加上-号存储
-        this.$store.dispatch('setBinValue', inversePlusOne(newValue.slice(1, newValue.length), true))
+        let sliceValue = newValue.slice(1, newValue.length)
+        this.$store.dispatch('setBinValue', inversePlusOne(sliceValue, true))
       }
     },
 
@@ -471,13 +473,15 @@ export default {
       // 按位非需要交换数字与符号顺序
       if (type === `Not`) {
         let length = this.expressions.length
-        this.$store.dispatch('setExpressions', this.expressions.slice(0, length - 2).concat([this.expressions[length - 1], this.expressions[length - 2]]))
+        let endExpressions = [this.expressions[length - 1], this.expressions[length - 2]]
+        this.$store.dispatch('setExpressions', this.expressions.slice(0, length - 2).concat(endExpressions))
       }
     },
 
     // 切换（循环）位移
     switchMoveType () {
       this.isRotateMove = !this.isRotateMove
+      // 是否循环，对应不同的键位
       let moveKeys = this.isRotateMove
         ? [
           {
@@ -537,9 +541,9 @@ export default {
       if (this.isTemp) return
       let length = this.systemValue.length
       // 当除去符号位后，只有一位时需要变为0
-      let isToZero = isNegative(this.systemValue) ? length > 2 : length > 1
+      let isToZero = isNegative(this.systemValue) ? length <= 2 : length <= 1
       // 将systemValue退格1位后，转化成二进制存储
-      let systemValue = isToZero ? this.systemValue.slice(0, length - 1) : `0`
+      let systemValue = isToZero ? `0` : this.systemValue.slice(0, length - 1)
       this.setBinValue(systemValue, SYSTEM[this.systemType])
     },
 
@@ -605,10 +609,11 @@ export default {
       if (this.canReplace) {
         // 替换符号
         this.replaceExpression(expression)
-      } else if (this.isRightBracketEnd) { // 最后为右括号时，直接插入符号
+      } else if (this.isRightBracketEnd) {
+        // 最后为右括号时，直接插入符号
         this.addExpression(expression)
       } else {
-        // ||后部分是对按位非的判断条件，此时不应该将当前值插入表达式
+        // if中的||后部分是对按位非的判断条件，表达式以按位非结尾时，不应该将当前值插入表达式
         if (!this.expressions.length || this.expressions.length && this.expressions[this.expressions.length - 1].type !== `value`) {
           // 先将当前二进制插入表达式，再插入符号
           this.addExpression({
@@ -631,6 +636,7 @@ export default {
       this.$store.dispatch('setExpressions', this.expressions.slice(0, this.expressions.length - 1).concat(expression))
     },
 
+    // 计算表达式
     calculateExpressions (expressions, isTemp) {
       let calcExpressions = expressions.map(expression => this.convertCalc(expression)).join(``)
       let result = calcExpressions.length ? this.handleResult(calculate(calcExpressions)) : `0`
@@ -687,7 +693,7 @@ export default {
         position--
       }
       // 按位非比较特殊，是将符号插入到数字前，所以截取的时候需要多截一个表达式
-      let startPosition = position > -1 // 若为-1，则表示找到表达式头，仍未找到优先级能够截取临时表达式的符号
+      let startPosition = position > -1 // 若为-1，则表示找到表达式第一个元素，也仍未找到优先级能够截取临时表达式的符号
         ? this.expressions[position].value === `Not`
           ? position
           : position + 1
@@ -761,6 +767,10 @@ export default {
     handleResult (result) {
       let binValue = convertSystem(result, SYSTEM[`dec`], SYSTEM[`bin`])
       return handleOverflow(binValue, this.bitLengthCount)
+    },
+
+    isSymbolEnd (key, symbol) {
+      return !!this.expressions.length && this.expressions[this.expressions.length - 1][key] === symbol
     },
 
     // 判断键位禁用状态

@@ -52,47 +52,50 @@ export default {
   },
 
   methods: {
+    // 添加记录
     addMemory () {
-      this.$store.dispatch('setMemories', [{
+      let memories = [{
         id: new Date().getTime(), // 使用当前时间戳作为id
         value: this.binValue
-      }].concat(this.memories))
+      }].concat(this.memories)
+      this.$store.dispatch('setMemories', memories)
       this.$nextTick(() => { this.addAnimation() })
     },
 
+    // 添加时的动画
     addAnimation () {
       let el = document.querySelectorAll('.memory-item')[0]
       el.style.height = `0`
       el.style.opacity = `0`
       // 动画队列
-      setTimeout(() => {
-        el.style.height = `100px`
-      }, 100)
-      setTimeout(() => {
-        el.style.opacity = `1`
-      }, 600)
+      setTimeout(() => el.style.height = `100px`, 100)
+      setTimeout(() => el.style.opacity = `1`, 600)
     },
 
     // 选择memory处理过溢出后的值作为binValue
     setBinValue (memory) {
-      this.$store.dispatch('setBinValue', convertSystem(this.showMemoryValue(memory.value), SYSTEM[this.systemType], SYSTEM[`bin`]))
+      let showMemoryValue = this.showMemoryValue(memory.value)
+      this.$store.dispatch('setBinValue', convertSystem(showMemoryValue, SYSTEM[this.systemType], SYSTEM[`bin`]))
     },
 
+    // 删除记录
     deleteMemory (index) {
       this.deleteAnimation(index)
-      // 为了不直接修改到state的数据，先浅拷贝一次再进行赋值
-      setTimeout(() => { // 延迟500ms执行是为了让动画执行完毕
+      setTimeout(() => { // 延迟500ms执行是为了等动画执行完毕
+        // 为了不直接修改到state的数据，先浅拷贝一次再进行赋值
         let memories = this.memories.slice()
         memories.splice(index, 1)
         this.$store.dispatch('setMemories', memories)
       }, 500)
     },
 
+    // 删除时的动画
     deleteAnimation (index) {
       let el = document.querySelectorAll('.memory-item')[index]
       el.style.height = `0`
     },
 
+    // 更新记录
     updateMemory (arithmetic, index) {
       let leftValue = concat0B(this.memories[index].value)
       let rightValue = concat0B(this.binValue)
@@ -105,6 +108,7 @@ export default {
       })
     },
 
+    // 重置记录
     resetMemory () {
       this.$store.dispatch('setMemories', [])
     },
@@ -112,7 +116,8 @@ export default {
     // 用于展示的值
     showMemoryValue (value) {
       // 先处理溢出，再转换进制
-      return convertSystem(handleOverflow(value, this.bitLengthCount), SYSTEM[`bin`], SYSTEM[this.systemType])
+      let handleValue = handleOverflow(value, this.bitLengthCount)
+      return convertSystem(handleValue, SYSTEM[`bin`], SYSTEM[this.systemType])
     },
 
     // 根据不同进制的显示规则处理值

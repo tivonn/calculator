@@ -31,7 +31,7 @@ import Bit from '@/components/Bit'
 import Memory from '@/components/Memory'
 
 export default {
-  name: 'app',
+  name: 'App',
 
   data () {
     return {

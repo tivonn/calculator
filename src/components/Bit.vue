@@ -63,7 +63,8 @@ export default {
 
     // 切换进制
     bitLengthCount (newValue) {
-      if (newValue === BIT_LENGTH[`QWORD`] && this.showBinValue[this.byteSignPosition] === `1`) { // 代表原本符号位为负，且由BYTE变为QWORD，将前面的位统一设置为1
+      if (newValue === BIT_LENGTH[`QWORD`] && this.showBinValue[this.byteSignPosition] === `1`) {
+        // 代表原本符号位为负，且由BYTE变为QWORD，将前面的位统一设置为1
         this.updatePrefixBit(`1`, this.byteSignPosition)
       } else {
         // 将禁用的位统一设置为0
@@ -104,15 +105,16 @@ export default {
 
     // 更新binValue
     setBinValue () {
+      let binValue
       if (!this.isNegative) { // 非负数
         // 去除前面多余的0再存储
-        let binValue = deletePrefixZero(this.showBinValue.join(''))
-        this.$store.dispatch('setBinValue', binValue)
+        binValue = deletePrefixZero(this.showBinValue.join(''))
       } else {
         // 按位取反再加1，求出十进制对应的正值，再加上‘-’号存储
-        let binValue = inversePlusOne(this.showBinValue.slice(this.signPosition, this.totalLength).join(''), true)
-        this.$store.dispatch('setBinValue', binValue)
+        let negativeValue = this.showBinValue.slice(this.signPosition, this.totalLength).join('')
+        binValue = inversePlusOne(negativeValue, true)
       }
+      this.$store.dispatch('setBinValue', binValue)
     },
 
     // 位数样式

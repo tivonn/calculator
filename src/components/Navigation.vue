@@ -18,7 +18,7 @@
         <use xlink:href="#icon-binary"></use>
       </svg>
     </span>
-    <span class="function-item switch-bit-length" @click="switchBitLength">{{ bitLength.type }}</span>
+    <span class="function-item switch-bit-length" :title="bitLength.type" @click="switchBitLength">{{ bitLength.type }}</span>
     <span class="function-item" title="内存存储" @click="$emit(`ms`)">MS</span>
     <span class="function-item toggle-ms" title="内存" @click.stop="$emit(`toggle-ms`)">M▾</span>
   </div>
@@ -41,8 +41,8 @@ export default {
 
   data () {
     return {
-      defaultBitLength: `QWORD`,
-      bitLengthOptions: { // 此处需要循环切换，采用类似链表指针的思想，next记录要切换的下一项。如果使用数组存储options，在切换时还需判断index是否超出。
+      defaultBitLength: `QWORD`, // 默认位数
+      bitLengthOptions: { // 此处需要循环切换，所以采用类似链表指针的思想，next记录要切换的下一项。如果不用链表而使用数组存储options，在切换时还需额外判断index是否超出。
         'QWORD': {
           type: `QWORD`,
           count: BIT_LENGTH[`QWORD`],
@@ -103,12 +103,17 @@ export default {
 <style lang='scss'>
 .navigation-container {
   .function-item {
-    width: 100px;
     height: 7vh;
     float: left;
     line-height: 7vh;
     text-align: center;
     cursor: pointer;
+    @media (min-width: 500px) {
+      width: 100px;
+    }
+    @media (max-width: 500px) {
+      width: 15%;
+    }
     &:hover {
       background-color: #dbdbdb;
     }
@@ -138,8 +143,11 @@ export default {
     @media (min-width: 700px) {
       width: calc(100% - 300px);
     }
-    @media (max-width: 700px) {
+    @media (min-width: 500px) and (max-width: 700px) {
       width: calc(100% - 400px);
+    }
+    @media (max-width: 500px) {
+      width: 40%;
     }
   }
   .toggle-ms {

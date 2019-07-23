@@ -66,13 +66,18 @@ export default {
     convertLabel (expression) {
       switch (expression.type) {
         case `value`:
-          return convertSystem(expression.value, SYSTEM[`bin`], SYSTEM[this.systemType])
+          let value = convertSystem(expression.value, SYSTEM[`bin`], SYSTEM[this.systemType])
+          // 十六进制需要大写
+          if (this.systemType === `hex`) {
+            value = value.toUpperCase()
+          }
+          return value
         default:
           return expression.value
       }
     },
 
-    // 根据不同进制的显示规则处理值
+    // 根据不同进制的显示规则来处理值
     convertValue (value, system) {
       return convertValue(value, system)
     },

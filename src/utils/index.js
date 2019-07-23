@@ -27,7 +27,9 @@ export const convertValue = (value, system) => {
     }
   }
   let { char, interval } = convertMap[system]
+  // 先将符号省略，根据间隔插入分隔符后再补上符号
   let newValue = `${isNegative(value) ? `-` : ``}${insertIntervalChar(absValue(value), char, interval)}`
+  // 十六进制需要大写
   if (system === `hex`) {
     newValue = newValue.toUpperCase()
   }
@@ -37,7 +39,7 @@ export const convertValue = (value, system) => {
 // 根据间隔插入字符
 export const insertIntervalChar = (str, char, interval) => {
   let length = str.length
-  // 字符长度不足间隔，则直接返回
+  // 字符长度不足间隔，则直接返回原字符
   if (length <= interval) return str
   let newStr = ``
   for (let i = length - 1; i >= 0; i--) {
@@ -45,7 +47,7 @@ export const insertIntervalChar = (str, char, interval) => {
       // 最前面的一节
       newStr = str.slice(0, length % interval || interval).concat(newStr)
     } else if ((length - i) % interval === 0) {
-      // 插入隔断的字符
+      // 插入分隔符
       newStr = char.concat(str.slice(i, i + interval)).concat(newStr)
     }
   }
@@ -76,7 +78,8 @@ export const deletePrefixZero = (value) => {
 
 // 二进制取反加一
 export const inversePlusOne = (value, needNegative) => {
-  let newValue = calculate(`(${concat0B(value.split('').map(bit => bit === `1` ? `0` : `1`).join(''))} + ${concat0B(`1`)})`)
+  let inverseValue = concat0B(value.split('').map(bit => bit === `1` ? `0` : `1`).join(''))
+  let newValue = calculate(`(${inverseValue} + ${concat0B(`1`)})`)
   return convertSystem(`${needNegative ? `-` : ``}${newValue}`, SYSTEM[`dec`], SYSTEM[`bin`])
 }
 
@@ -120,6 +123,7 @@ export const handleOverflow = (value, bitLengthCount) => {
   return value
 }
 
+// 计算两个符号的数量差
 export const extraSymbol = (expressions, moreSymbol, lessSymbol) => {
   let extraCount = 0
   for (let expression of expressions) {

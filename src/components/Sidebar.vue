@@ -88,6 +88,7 @@ export default {
       }
     ]
 
+    // 创建计算器类型节点
     let createTypes = (types) => {
       let typeList =
       <ul class="type-list">
@@ -103,6 +104,7 @@ export default {
       return typeList
     }
 
+    // 创建计算器模式节点
     let createModes = (modes) => {
       let modeList =
         <ul class="mode-list">
@@ -141,8 +143,8 @@ export default {
   position: fixed;
   top: 0;
   left: -320px;
-  z-index: 99;
-  background-color: #e2e8e6;
+  z-index: 100;
+  background-color: #f2f2f2;
   transition: transform .5s;
   box-shadow: 0 2px 12px 0 rgba(0,0,0,.1);
   &.active {
@@ -177,6 +179,7 @@ export default {
     padding-left: 20px;
     line-height: 5vh;
     border-left: 3px solid #e2e8e6;
+    cursor: pointer;
     &:hover {
       background-color: #dbdbdb;
     }
