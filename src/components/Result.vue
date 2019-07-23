@@ -1,7 +1,7 @@
 <template>
   <div class="result-container">
     <div class="expressions">{{ showExpressions }}</div>
-    <p class="system-value">{{ systemValue }}</p>
+    <p class="system-value">{{ convertValue(systemValue, systemType) }}</p>
     <ul class="system-list">
       <li
         v-for="(system, type) in systems"
@@ -10,7 +10,7 @@
         :class="systemClass(type)"
         @click="switchSystem(type)">
         <span class="system-type">{{ type.toUpperCase() }}</span>
-        <span class="system-count">{{ system.count }}</span>
+        <span class="system-count">{{ convertValue(system.count, type) }}</span>
       </li>
     </ul>
   </div>
@@ -19,7 +19,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import { SYSTEM } from '@/utils/enum'
-import { convertSystem, isNegative } from '@/utils'
+import { convertSystem, convertValue, isNegative } from '@/utils'
 
 export default {
   name: 'Result',
@@ -70,6 +70,11 @@ export default {
         default:
           return expression.value
       }
+    },
+
+    // 根据不同进制的显示规则处理值
+    convertValue (value, system) {
+      return convertValue(value, system)
     },
 
     // 进制样式

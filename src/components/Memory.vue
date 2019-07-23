@@ -8,7 +8,7 @@
           :key="memory.id"
           class="memory-item"
           @click="setBinValue(memory)">
-          <p class="memory-value">{{ showMemoryValue(memory.value) }}</p>
+          <p class="memory-value">{{ convertValue(showMemoryValue(memory.value), systemType) }}</p>
           <div>
             <span class="operation-item" @click.stop="deleteMemory(index)">MC</span>
             <span class="operation-item" @click.stop="updateMemory(`+`, index)">M+</span>
@@ -29,7 +29,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import { SYSTEM } from '@/utils/enum'
-import { convertSystem, concat0B, calculate, handleOverflow } from '@/utils'
+import { convertSystem, convertValue, concat0B, calculate, handleOverflow } from '@/utils'
 
 export default {
   name: 'Memory',
@@ -105,6 +105,11 @@ export default {
     showMemoryValue (value) {
       // 先处理溢出，再转换进制
       return convertSystem(handleOverflow(value, this.bitLengthCount), SYSTEM[`bin`], SYSTEM[this.systemType])
+    },
+
+    // 根据不同进制的显示规则处理值
+    convertValue (value, system) {
+      return convertValue(value, system)
     }
   }
 }
@@ -146,9 +151,13 @@ export default {
   }
   .memory-value {
     height: 60px;
+    padding-left: 5px;
     line-height: 70px;
+    overflow-x: auto;
+    overflow-y: hidden;
     font-size: 20px;
     font-weight: bold;
+    white-space: nowrap;
   }
   .operation-item {
     width: 50px;

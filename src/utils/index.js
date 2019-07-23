@@ -3,11 +3,53 @@ import { SYSTEM } from '@/utils/enum'
 // 进制转换
 export const convertSystem = (oldVlalue, from, to) => {
   let newValue = parseInt(oldVlalue, from).toString(to)
-  // 十六进制需要转换为大写
-  if (to === SYSTEM[`hex`]) {
+  return newValue
+}
+
+// 根据不同进制的显示规则处理值
+export const convertValue = (value, system) => {
+  const convertMap = {
+    'hex': {
+      char: ` `,
+      interval: 4
+    },
+    'dec': {
+      char: `,`,
+      interval: 3
+    },
+    'oct': {
+      char: ` `,
+      interval: 3
+    },
+    'bin': {
+      char: ` `,
+      interval: 4
+    }
+  }
+  let { char, interval } = convertMap[system]
+  let newValue = `${isNegative(value) ? `-` : ``}${insertIntervalChar(absValue(value), char, interval)}`
+  if (system === `hex`) {
     newValue = newValue.toUpperCase()
   }
   return newValue
+}
+
+// 根据间隔插入字符
+export const insertIntervalChar = (str, char, interval) => {
+  let length = str.length
+  // 字符长度不足间隔，则直接返回
+  if (length <= interval) return str
+  let newStr = ``
+  for (let i = length - 1; i >= 0; i--) {
+    if (i === 0) {
+      // 最前面的一节
+      newStr = str.slice(0, length % interval || interval).concat(newStr)
+    } else if ((length - i) % interval === 0) {
+      // 插入隔断的字符
+      newStr = char.concat(str.slice(i, i + interval)).concat(newStr)
+    }
+  }
+  return newStr
 }
 
 // 按照位数补全前缀

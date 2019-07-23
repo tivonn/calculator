@@ -1,6 +1,6 @@
 <template>
   <div class="bit-container">
-    <!-- 此处为了简写代码，选择了遍历数字。由于数据顺序不会发生变化，且没有唯一id，遍历过程中key直接使用item对应的数字，即index -->
+    <!-- 此处为了简写代码，选择了遍历位数。由于数据顺序不会发生变化，且没有唯一id，遍历过程中key直接使用index -->
     <span v-for="(bit, index) in showBinValue" :key="index" class="bit-item">
       <button
         class="bit-text"
