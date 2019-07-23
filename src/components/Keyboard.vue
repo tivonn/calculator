@@ -10,9 +10,10 @@
           @click="key.callback(key.type)">
           <span>{{ key.type }}</span>
           <!--定制化的额外文字-->
-          <template v-if="key.type === `(`">
-            <span v-if="extraLeftBracket > 0" class="extra-left-bracket">{{ extraLeftBracket }}</span>
-          </template>
+          <key-extra
+            :key-item="key"
+            :expressions="expressions">
+          </key-extra>
         </button>
       </td>
     </tr>
@@ -22,7 +23,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import { SYSTEM } from '@/utils/enum'
-import { convertSystem, setPrefixBit, deletePrefixZero, inversePlusOne, concat0B, isNegative, calculate, handleOverflow } from '@/utils'
+import { convertSystem, setPrefixBit, deletePrefixZero, inversePlusOne, concat0B, isNegative, calculate, handleOverflow, extraSymbol } from '@/utils'
 import Mousetrap from 'mousetrap'
 
 export default {
@@ -379,17 +380,7 @@ export default {
 
     // 左括号比右括号多的数量
     extraLeftBracket () {
-      let extraLeftBracket = 0
-      for (let expression of this.expressions) {
-        if (expression.type === `bracket`) {
-          if (expression.value === `(`) {
-            extraLeftBracket++
-          } else if (expression.value === `)`) {
-            extraLeftBracket--
-          }
-        }
-      }
-      return extraLeftBracket
+      return extraSymbol(this.expressions, `(`, `)`)
     },
 
     // 表达式最后一位为右括号
@@ -782,6 +773,51 @@ export default {
       const switchMove = key.type === `↑` && this.isRotateMove ? 'active' : ''
       const classList = [switchMove]
       return classList
+    }
+  },
+
+  components: {
+    // 目前只有`(`键有额外的文字，代码量较少，所以直接写在父组件里。同时考虑到拓展性，可以更灵活地兼容多种键位的额外文字，采用jsx的写法。
+    KeyExtra: {
+      props: {
+        keyItem: {
+          type: Object,
+          required: true,
+          default: () => {}
+        },
+
+        expressions: {
+          type: Array,
+          required: true,
+          default: () => []
+        }
+      },
+
+      computed: {
+        // 左括号比右括号多的数量
+        extraLeftBracket () {
+          return extraSymbol(this.expressions, `(`, `)`)
+        }
+      },
+
+      methods: {
+        createExtra () {
+          switch (this.keyItem.type) {
+            case `(`:
+              return this.extraLeftBracket > 0
+                ? <span class="extra-left-bracket">{ this.extraLeftBracket }</span>
+                : ``
+            default:
+              return ``
+          }
+        }
+      },
+
+      render (h) {
+        return (
+          <span>{ this.createExtra() }</span>
+        )
+      }
     }
   }
 }

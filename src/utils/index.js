@@ -119,3 +119,15 @@ export const handleOverflow = (value, bitLengthCount) => {
   }
   return value
 }
+
+export const extraSymbol = (expressions, moreSymbol, lessSymbol) => {
+  let extraCount = 0
+  for (let expression of expressions) {
+    if (expression.value === moreSymbol) {
+      extraCount++
+    } else if (expression.value === lessSymbol) {
+      extraCount--
+    }
+  }
+  return extraCount
+}
