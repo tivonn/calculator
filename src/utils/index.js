@@ -1,3 +1,4 @@
+import store from '@/store'
 import { SYSTEM } from '@/utils/enum'
 
 // 进制转换
@@ -79,8 +80,8 @@ export const deletePrefixZero = (value) => {
 // 二进制取反加一
 export const inversePlusOne = (value, needNegative) => {
   let inverseValue = concat0B(value.split('').map(bit => bit === `1` ? `0` : `1`).join(''))
-  let newValue = calculate(`(${inverseValue} + ${concat0B(`1`)})`)
-  return convertSystem(`${needNegative ? `-` : ``}${newValue}`, SYSTEM[`dec`], SYSTEM[`bin`])
+  let newValue = calculate(`(${inverseValue} + ${concat0B(`1`)})`, false)
+  return `${needNegative ? `-` : ``}${newValue}`
 }
 
 // 给二进制数字加上0B
@@ -104,15 +105,22 @@ export const convertMinus = expressions => {
 }
 
 // 计算
-export const calculate = expressions => {
+export const calculate = (expressions, needHandleOverflow) => {
   // eslint-disable-next-line
-  return eval(convertMinus(expressions))
+  let calculateResult = eval(convertMinus(expressions))
+  let binResult = convertSystem(calculateResult, SYSTEM[`dec`], SYSTEM[`bin`])
+  if (needHandleOverflow) {
+    return handleOverflow(binResult)
+  } else {
+    return binResult
+  }
 }
 
 // 处理溢出
-export const handleOverflow = (value, bitLengthCount) => {
+export const handleOverflow = (value) => {
   // 原本的正负会决定溢出后是否需要添加负号
   let isNegativeValue = isNegative(value)
+  let bitLengthCount = store.getters.bitLengthCount
   // 从字符串尾部开始截取
   value = value.slice(-bitLengthCount, value.length)
   // 处理负数

@@ -23,7 +23,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import { SYSTEM } from '@/utils/enum'
-import { convertSystem, setPrefixBit, deletePrefixZero, inversePlusOne, concat0B, isNegative, calculate, handleOverflow, extraSymbol } from '@/utils'
+import { convertSystem, setPrefixBit, deletePrefixZero, inversePlusOne, concat0B, isNegative, calculate, extraSymbol } from '@/utils'
 import Mousetrap from 'mousetrap'
 
 export default {
@@ -639,14 +639,7 @@ export default {
     // 计算表达式
     calculateExpressions (expressions, isTemp) {
       let calcExpressions = expressions.map(expression => this.convertCalc(expression)).join(``)
-      let result
-      if (calcExpressions.length) {
-        let calculateResult = calculate(calcExpressions)
-        let binResult = convertSystem(calculateResult, SYSTEM[`dec`], SYSTEM[`bin`])
-        result = handleOverflow(binResult, this.bitLengthCount)
-      } else {
-        result = `0`
-      }
+      let result = calcExpressions.length ? calculate(calcExpressions, true) : `0`
       if (!isTemp) {
         this.clearExpressions()
       }
