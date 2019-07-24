@@ -162,6 +162,9 @@ export default {
     }
     &.active {
       color: #4093ff;
+      &:hover {
+        color: #666;
+      }
     }
     &[disabled] {
       color: #c8c8c8;
