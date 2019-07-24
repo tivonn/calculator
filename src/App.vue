@@ -1,5 +1,5 @@
 <template>
-  <div id="app" @click="showSidebar = false; showMemory = false;">
+  <div id="app">
     <div class="calculator-container">
       <heading @show-sidebar="showSidebar = true"></heading>
       <sidebar :show-sidebar="showSidebar">
@@ -57,7 +57,14 @@ export default {
 
     // 监听事件
     addEventListener () {
+      window.addEventListener('click', this.resetShowValue)
       window.addEventListener('mouseup', this.clearActiveEl)
+    },
+
+    // 隐藏z-index较高的元素
+    resetShowValue () {
+      this.showSidebar && (this.showSidebar = false)
+      this.showMemory && (this.showMemory = false)
     },
 
     // 清空当前active的元素
@@ -67,6 +74,7 @@ export default {
 
     // 移除监听事件
     removeEventListener () {
+      window.removeEventListener('click', this.resetShowValue)
       window.removeEventListener('mouseup', this.clearActiveEl)
     },
 
