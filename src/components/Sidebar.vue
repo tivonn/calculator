@@ -110,7 +110,7 @@ export default {
         <ul class="mode-list">
           { modes.map(mode => {
             let modeEl =
-              <li class={['mode-item', mode.active ? 'active' : '']}>
+              <li class={['mode-item', { 'active': mode.active }]}>
                 <i class={['mode-icon', 'iconfont', mode.icon]}></i>
                 <span class="mode-text">{ mode.text }</span>
               </li>

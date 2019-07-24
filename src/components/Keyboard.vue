@@ -639,7 +639,14 @@ export default {
     // 计算表达式
     calculateExpressions (expressions, isTemp) {
       let calcExpressions = expressions.map(expression => this.convertCalc(expression)).join(``)
-      let result = calcExpressions.length ? this.handleResult(calculate(calcExpressions)) : `0`
+      let result
+      if (calcExpressions.length) {
+        let calculateResult = calculate(calcExpressions)
+        let binResult = convertSystem(calculateResult, SYSTEM[`dec`], SYSTEM[`bin`])
+        result = handleOverflow(binResult, this.bitLengthCount)
+      } else {
+        result = `0`
+      }
       if (!isTemp) {
         this.clearExpressions()
       }
@@ -761,12 +768,6 @@ export default {
         default: // 目前只有括号模式符合
           return value
       }
-    },
-
-    // 判断是否溢出
-    handleResult (result) {
-      let binValue = convertSystem(result, SYSTEM[`dec`], SYSTEM[`bin`])
-      return handleOverflow(binValue, this.bitLengthCount)
     },
 
     isSymbolEnd (key, symbol) {
