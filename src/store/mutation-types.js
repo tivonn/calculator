@@ -8,3 +8,6 @@ export const SET_BIT_LENGTH = `SET_BIT_LENGTH`
 // memory
 export const SET_MEMORIES = `SET_MEMORIES`
 export const UPDATE_MEMORY = `UPDATE_MEMORY`
+
+// status
+export const SET_ACTIVE_EL = `SET_ACTIVE_EL`

@@ -5,9 +5,10 @@
       <td v-for="key in keys.slice((rowIndex - 1) * 6, rowIndex * 6)" :key="key.type" colspan="1">
         <button
           class="key-item"
-          :class="`${key.class} ${keyClass(key)}`"
+          :class="[`${key.class} ${keyClass(key)}`, { 'active': isActive(key.type) }]"
           :disabled="isDisabled(key.disableds)"
-          @click="key.callback(key.type)">
+          @click="key.callback(key.type)"
+          @mousedown="setActiveKey(key.type)">
           <span>{{ key.type }}</span>
           <!--定制化的额外文字-->
           <key-extra
@@ -352,7 +353,8 @@ export default {
       'binValue',
       'systemType',
       'systemValue',
-      'bitLengthCount'
+      'bitLengthCount',
+      'activeEl'
     ]),
 
     // 判断最后的符号是否可以直接替换
@@ -772,6 +774,19 @@ export default {
       return disableds.some(systemType => systemType === this.systemType)
     },
 
+    // 判断键位active状态
+    isActive (value) {
+      return this.activeEl.value === value
+    },
+
+    // 设置当前active的键位
+    setActiveKey (value) {
+      this.$store.dispatch('setActiveEl', {
+        type: `key`,
+        value
+      })
+    },
+
     // key的动态样式
     keyClass (key) {
       const switchMove = key.type === `↑` && this.isRotateMove ? 'active' : ''
@@ -843,6 +858,9 @@ export default {
     cursor: pointer;
     &:hover {
       background-color: #dbdbdb;
+      &.active {
+        background-color: #bebebe;
+      }
     }
     &[disabled] {
       color: #c8c8c8;

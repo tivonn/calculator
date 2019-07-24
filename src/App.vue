@@ -41,7 +41,35 @@ export default {
     }
   },
 
+  mounted () {
+    this.init()
+  },
+
+  // 虽然App.vue中写beforeDestroy意义不大，但为了保持良好的编程习惯，还是将移除挂载在全局的事件写上
+  beforeDestroy () {
+    this.removeEventListener()
+  },
+
   methods: {
+    init () {
+      this.addEventListener()
+    },
+
+    // 监听事件
+    addEventListener () {
+      window.addEventListener('mouseup', this.clearActiveEl)
+    },
+
+    // 清空当前active的元素
+    clearActiveEl () {
+      this.$store.dispatch('setActiveEl', {})
+    },
+
+    // 移除监听事件
+    removeEventListener () {
+      window.removeEventListener('mouseup', this.clearActiveEl)
+    },
+
     // 切换全键盘和bit视图
     toggleKeyboard (value) {
       this.showKeyboard = value
