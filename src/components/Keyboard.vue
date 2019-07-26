@@ -474,15 +474,14 @@ export default {
     },
 
     // 左移右移
-    keyMove (direction) {
-      this.handleExpression({
-        type: `move`,
-        value: direction
-      })
+    keyMove (key) {
+      let { value } = key
+      this.handleExpression(key)
     },
 
     // 循环左移右移
-    keyRotateMove (direction) {
+    keyRotateMove (key) {
+      let { direction } = key
       // 先补全位数
       let completeValue = setPrefixBit(this.binValue, this.bitLengthCount)
       // 进行移动
@@ -503,11 +502,9 @@ export default {
     },
 
     // 按位运算
-    keyBitwise (type) {
-      this.handleExpression({
-        type: `bitwise`,
-        value: type
-      })
+    keyBitwise (key) {
+      this.handleExpression(key)
+      let { type } = key
       // 按位非需要交换数字与符号顺序
       if (type === `Not`) {
         let length = this.expressions.length
@@ -563,11 +560,8 @@ export default {
     },
 
     // 取模
-    keyMod () {
-      this.handleExpression({
-        type: `mod`,
-        value: `Mod`
-      })
+    keyMod (key) {
+      this.handleExpression(key)
     },
 
     // 清除当前值
@@ -596,15 +590,13 @@ export default {
     },
 
     // 加减乘除
-    keyArithmetic (arithmetic) {
-      this.handleExpression({
-        type: `arithmetic`,
-        value: arithmetic
-      })
+    keyArithmetic (key) {
+      this.handleExpression(key)
     },
 
     // 输入值
-    keyValue (value) {
+    keyValue (key) {
+      let { value } = key
       // 表达式最后一位为右括号时，或表达式最后一位是值（兼容按位非）时，禁止输入值
       if (this.isRightBracketEnd || this.isValueEnd) return
       // 计算完成时，需要重置
@@ -621,23 +613,21 @@ export default {
     },
 
     // 左括号
-    keyLeftBracket () {
+    keyLeftBracket (key) {
       // 表达式最后为右括号或数字时，不增加左括号
       if (this.isRightBracketEnd || this.isValueEnd) return
+      ley { type, value } = key
       this.addExpression({
-        type: `bracket`,
-        value: `(`
+        type,
+        value
       })
     },
 
     // 右括号
-    keyRightBracket () {
+    keyRightBracket (key) {
       // 左括号数量不足以匹配时，不增加右括号
       if (this.extraLeftBracket <= 0) return
-      this.handleExpression({
-        type: `bracket`,
-        value: `)`
-      })
+      this.handleExpression(key)
     },
 
     // 切换正负
@@ -653,7 +643,12 @@ export default {
     keyDot () { },
 
     // 处理表达式
-    handleExpression (expression) {
+    handleExpression (key) {
+      let { type, value } = key
+      let expression = {
+        type,
+        value
+      }
       if (this.canReplace) {
         // 替换符号
         this.replaceExpression(expression)

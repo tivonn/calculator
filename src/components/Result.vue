@@ -29,7 +29,8 @@ export default {
       'expressions',
       'binValue',
       'systemType',
-      'systemValue'
+      'systemValue',
+      'bitValue'
     ]),
 
     // 显示的表达式
@@ -42,15 +43,28 @@ export default {
       let systems = {}
       for (let system in SYSTEM) {
         let count = convertSystem(this.binValue, SYSTEM[`bin`], SYSTEM[system])
-        // 二进制显示的length需要是4的倍数
-        if (system === `bin`) {
-          // 判断是否为正数
-          if (!isNegative(count) && count !== `0`) {
-            // 二进制时，按照4位一组补全
-            let modCount = count.length % 4
-            if (modCount !== 0) {
-              count = `0`.repeat(4 - modCount).concat(count)
-            }
+        if (!isNegative(count)) {
+          // 非负数时，二进制显示的length需要是4的倍数，其余进制根据计算的结果正常显示
+          if (system === `bin` && count !== `0`) {
+            count = this.setIntervalPrefix(count, 4, `0`)
+          }
+        } else {
+          // 负数时，除十进制外，其余进制不用负号表示。二进制先求原码，转换为反码后再加1，十六进制和八进制需要以二进制为基准，转换显示
+          switch (system) {
+            case (`hex`):
+              // 十六进制，需要将二进制从右到左每4位合并为一组再转换
+              count = this.convertCount(this.bitValue, SYSTEM[`hex`], 4)
+              break
+            case (`dec`):
+              // 十进制不需要做额外处理
+              break
+            case (`oct`):
+              // 八进制，需要将二进制从右到左每3位合并为一组再转换
+              count = this.convertCount(this.bitValue, SYSTEM[`hex`], 3)
+              break
+            case (`bin`):
+              count = this.bitValue
+              break
           }
         }
         systems[system] = {
@@ -80,6 +94,28 @@ export default {
     // 根据不同进制的显示规则来处理值
     convertValue (value, system) {
       return convertValue(value, system)
+    },
+
+    // 将二进制根据间隔分组，转换为其它进制
+    convertCount (value, system, interval) {
+      value = this.setIntervalPrefix(value, interval, `0`)
+      let systemValue = ``
+      let groupCount = value.length / interval
+      for (let i = 0; i < groupCount; i++) {
+        let groupValue = value.slice(i * interval, (i + 1) * interval)
+        systemValue = systemValue.concat(convertSystem(groupValue, SYSTEM[`bint`], system))
+      }
+      return systemValue
+    },
+
+    // 根据间隔的长度补全位数
+    setIntervalPrefix (value, interval, prefix) {
+      let modCount = value.length % interval
+      if (modCount !== 0) {
+        return prefix.repeat(interval - modCount).concat(value)
+      } else {
+        return value
+      }
     },
 
     // 进制样式

@@ -7,7 +7,8 @@ const state = {
   isTemp: false,
   binValue: `0`,
   systemType: `dec`,
-  bitLength: {}
+  bitLength: {},
+  bitValue: ``
 }
 
 const getters = {
@@ -38,7 +39,10 @@ const getters = {
   // 字长对应位数
   bitLengthCount: state => {
     return state.bitLength.count
-  }
+  },
+
+  // 当前位数下当前值的二进制
+  bitValue: state => state.bitValue
 }
 
 const actions = {
@@ -62,6 +66,10 @@ const actions = {
 
   setBitLength ({ commit }, value) {
     commit(types.SET_BIT_LENGTH, value)
+  },
+
+  setBitValue ({ commit}, value) {
+    commit(types.SET_BIT_VALUE, value)
   }
 }
 
@@ -84,6 +92,10 @@ const mutations = {
 
   [types.SET_BIT_LENGTH] (state, value) {
     state.bitLength = value
+  },
+
+  [types.SET_BIT_VALUE] (state, value) {
+    state.bitValue = value
   }
 }
 
