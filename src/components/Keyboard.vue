@@ -2,14 +2,14 @@
   <table class="keyboard-container">
     <!-- 此处为了简写代码，选择了遍历数字。由于数据顺序不会发生变化，且没有唯一id，遍历过程中key直接使用item对应的数字，即index -->
     <tr v-for="rowIndex in 6" :key="rowIndex">
-      <td v-for="key in keys.slice((rowIndex - 1) * 6, rowIndex * 6)" :key="key.type" colspan="1">
+      <td v-for="key in keys.slice((rowIndex - 1) * 6, rowIndex * 6)" :key="key.value" colspan="1">
         <button
           class="key-item"
-          :class="[`${key.class} ${keyClass(key)}`, { 'active': isActive(key.type) }]"
+          :class="[`${key.class} ${keyClass(key)}`, { 'active': isActive(key.value) }]"
           :disabled="isDisabled(key.disableds)"
-          @click="key.callback(key.type)"
-          @mousedown="setActiveKey(key.type)">
-          <span>{{ key.type }}</span>
+          @click="key.callback(key)"
+          @mousedown="setActiveKey(key.value)">
+          <span>{{ key.value }}</span>
           <!--定制化的额外文字-->
           <key-extra
             :key-item="key"
@@ -42,7 +42,8 @@ export default {
     return {
       keys: [ // 键位
         {
-          type: `Lsh`, // 类型
+          type: `move`,
+          value: `Lsh`, // 类型
           class: [], // 类名
           disableds: [], // 禁用状态对应的进制
           canKeyIn: true, // 是否支持键盘输入
@@ -50,7 +51,8 @@ export default {
           callback: this.keyMove // 点击回调
         },
         {
-          type: `Rsh`,
+          type: `move`,
+          value: `Rsh`,
           class: [],
           disableds: [],
           canKeyIn: true,
@@ -58,7 +60,8 @@ export default {
           callback: this.keyMove
         },
         {
-          type: `Or`,
+          type: `bitwise`,
+          value: `Or`,
           class: [],
           disableds: [],
           canKeyIn: true,
@@ -66,7 +69,8 @@ export default {
           callback: this.keyBitwise
         },
         {
-          type: `Xor`,
+          type: `bitwise`,
+          value: `Xor`,
           class: [],
           disableds: [],
           canKeyIn: true,
@@ -74,7 +78,8 @@ export default {
           callback: this.keyBitwise
         },
         {
-          type: `Not`,
+          type: `bitwise`,
+          value: `Not`,
           class: [],
           disableds: [],
           canKeyIn: true,
@@ -82,7 +87,8 @@ export default {
           callback: this.keyBitwise
         },
         {
-          type: `And`,
+          type: `bitwise`,
+          value: `And`,
           class: [],
           disableds: [],
           canKeyIn: true,
@@ -90,14 +96,16 @@ export default {
           callback: this.keyBitwise
         },
         {
-          type: `↑`,
+          type: `switchMove`,
+          value: `↑`,
           class: [`key-switch-move`],
           disableds: [],
           canKeyIn: false,
           callback: this.switchMoveType
         },
         {
-          type: `Mod`,
+          type: `mod`,
+          value: `Mod`,
           class: [],
           disableds: [],
           canKeyIn: true,
@@ -105,7 +113,8 @@ export default {
           callback: this.keyMod
         },
         {
-          type: `CE`,
+          type: `ce`,
+          value: `CE`,
           class: [`key-ce`],
           disableds: [],
           canKeyIn: true,
@@ -113,14 +122,16 @@ export default {
           callback: this.keyCe
         },
         {
-          type: `Ｃ`,
+          type: `reset`,
+          value: `Ｃ`,
           class: [`key-reset`],
           disableds: [],
           canKeyIn: false,
           callback: this.keyReset
         },
         {
-          type: `←`,
+          type: `backspace`,
+          value: `←`,
           class: [`key-backspace`],
           disableds: [],
           canKeyIn: true,
@@ -128,7 +139,8 @@ export default {
           callback: this.keyBackspace
         },
         {
-          type: `÷`,
+          type: `arithmetic`,
+          value: `÷`,
           class: [`key-arithmetic`],
           disableds: [],
           canKeyIn: true,
@@ -136,7 +148,8 @@ export default {
           callback: this.keyArithmetic
         },
         {
-          type: `A`,
+          type: `value`,
+          value: `A`,
           class: [`key-letter`],
           disableds: [`dec`, `oct`, `bin`],
           canKeyIn: true,
@@ -144,7 +157,8 @@ export default {
           callback: this.keyValue
         },
         {
-          type: `B`,
+          type: `value`,
+          value: `B`,
           class: [`key-letter`],
           disableds: [`dec`, `oct`, `bin`],
           canKeyIn: true,
@@ -152,7 +166,8 @@ export default {
           callback: this.keyValue
         },
         {
-          type: `7`,
+          type: `value`,
+          value: `7`,
           class: [`key-number`],
           disableds: [`bin`],
           canKeyIn: true,
@@ -160,7 +175,8 @@ export default {
           callback: this.keyValue
         },
         {
-          type: `8`,
+          type: `value`,
+          value: `8`,
           class: [`key-number`],
           disableds: [`oct`, `bin`],
           canKeyIn: true,
@@ -168,7 +184,8 @@ export default {
           callback: this.keyValue
         },
         {
-          type: `9`,
+          type: `value`,
+          value: `9`,
           class: [`key-number`],
           disableds: [`oct`, `bin`],
           canKeyIn: true,
@@ -176,7 +193,8 @@ export default {
           callback: this.keyValue
         },
         {
-          type: `×`,
+          type: `arithmetic`,
+          value: `×`,
           class: [`key-arithmetic`],
           disableds: [],
           canKeyIn: true,
@@ -184,7 +202,8 @@ export default {
           callback: this.keyArithmetic
         },
         {
-          type: `C`,
+          type: `value`,
+          value: `C`,
           class: [`key-letter`],
           disableds: [`dec`, `oct`, `bin`],
           canKeyIn: true,
@@ -192,7 +211,8 @@ export default {
           callback: this.keyValue
         },
         {
-          type: `D`,
+          type: `value`,
+          value: `D`,
           class: [`key-letter`],
           disableds: [`dec`, `oct`, `bin`],
           canKeyIn: true,
@@ -200,7 +220,8 @@ export default {
           callback: this.keyValue
         },
         {
-          type: `4`,
+          type: `value`,
+          value: `4`,
           class: [`key-number`],
           disableds: [`bin`],
           canKeyIn: true,
@@ -208,7 +229,8 @@ export default {
           callback: this.keyValue
         },
         {
-          type: `5`,
+          type: `value`,
+          value: `5`,
           class: [`key-number`],
           disableds: [`bin`],
           canKeyIn: true,
@@ -216,7 +238,8 @@ export default {
           callback: this.keyValue
         },
         {
-          type: `6`,
+          type: `value`,
+          value: `6`,
           class: [`key-number`],
           disableds: [`bin`],
           canKeyIn: true,
@@ -224,7 +247,8 @@ export default {
           callback: this.keyValue
         },
         {
-          type: `-`,
+          type: `arithmetic`,
+          value: `-`,
           class: [`key-arithmetic`],
           disableds: [],
           canKeyIn: true,
@@ -232,7 +256,8 @@ export default {
           callback: this.keyArithmetic
         },
         {
-          type: `E`,
+          type: `value`,
+          value: `E`,
           class: [`key-letter`],
           disableds: [`dec`, `oct`, `bin`],
           canKeyIn: true,
@@ -240,7 +265,8 @@ export default {
           callback: this.keyValue
         },
         {
-          type: `F`,
+          type: `value`,
+          value: `F`,
           class: [`key-letter`],
           disableds: [`dec`, `oct`, `bin`],
           canKeyIn: true,
@@ -248,7 +274,8 @@ export default {
           callback: this.keyValue
         },
         {
-          type: `1`,
+          type: `value`,
+          value: `1`,
           class: [`key-number`],
           disableds: [],
           canKeyIn: true,
@@ -256,7 +283,8 @@ export default {
           callback: this.keyValue
         },
         {
-          type: `2`,
+          type: `value`,
+          value: `2`,
           class: [`key-number`],
           disableds: [`bin`],
           canKeyIn: true,
@@ -264,7 +292,8 @@ export default {
           callback: this.keyValue
         },
         {
-          type: `3`,
+          type: `value`,
+          value: `3`,
           class: [`key-number`],
           disableds: [`bin`],
           canKeyIn: true,
@@ -272,7 +301,8 @@ export default {
           callback: this.keyValue
         },
         {
-          type: `+`,
+          type: `arithmetic`,
+          value: `+`,
           class: [`key-arithmetic`],
           disableds: [],
           canKeyIn: true,
@@ -280,7 +310,8 @@ export default {
           callback: this.keyArithmetic
         },
         {
-          type: `(`,
+          type: `bracket`,
+          value: `(`,
           class: [`key-bracket`],
           disableds: [],
           canKeyIn: true,
@@ -288,7 +319,8 @@ export default {
           callback: this.keyLeftBracket
         },
         {
-          type: `)`,
+          type: `bracket`,
+          value: `)`,
           class: [`key-bracket`],
           disableds: [],
           canKeyIn: true,
@@ -296,14 +328,16 @@ export default {
           callback: this.keyRightBracket
         },
         {
-          type: `±`,
+          type: `switchSign`,
+          value: `±`,
           class: [`key-switch-sign`],
           disableds: [],
           canKeyIn: false,
           callback: this.switchSign
         },
         {
-          type: `0`,
+          type: `value`,
+          value: `0`,
           class: [`key-number`],
           disableds: [],
           canKeyIn: true,
@@ -311,14 +345,16 @@ export default {
           callback: this.keyValue
         },
         {
-          type: `.`,
+          type: `dot`,
+          value: `.`,
           class: [`key-dot`],
           disableds: [`hex`, `dec`, `oct`, `bin`],
           canKeyIn: false,
           callback: this.keyDot
         },
         {
-          type: `=`,
+          type: `arithmetic`,
+          value: `=`,
           class: [`key-arithmetic`],
           disableds: [],
           canKeyIn: true,
@@ -377,7 +413,7 @@ export default {
 
     // 表达式最后一位是值
     isValueEnd () {
-      return this.isSymbolEnd('type', `value`)
+      return this.isSpecifiedEnd(`type`, `value`)
     },
 
     // 左括号比右括号多的数量
@@ -387,7 +423,7 @@ export default {
 
     // 表达式最后一位为右括号
     isRightBracketEnd () {
-      return this.isSymbolEnd('value', `)`)
+      return this.isSpecifiedEnd(`value`, `)`)
     }
   },
 
@@ -426,7 +462,7 @@ export default {
           Mousetrap.bind(key.keyValue, () => {
             // 判断当前进制是否为禁用状态
             if (key.disableds.some(disabled => disabled === this.systemType)) return
-            key.callback(key.type)
+            key.callback(key)
           })
         }
       }
@@ -487,29 +523,39 @@ export default {
       let moveKeys = this.isRotateMove
         ? [
           {
-            type: `RoL`,
+            type: `rotateMove`,
+            value: `RoL`,
             class: ``,
             disableds: [],
+            canKeyIn: false,
             callback: this.keyRotateMove
           },
           {
-            type: `RoR`,
+            type: `rotateMove`,
+            value: `RoR`,
             class: ``,
             disableds: [],
+            canKeyIn: false,
             callback: this.keyRotateMove
           }
         ]
         : [
           {
-            type: `Lsh`,
+            type: `move`,
+            value: `Lsh`,
             class: ``,
             disableds: [],
+            canKeyIn: true,
+            keyValue: [`<`],
             callback: this.keyMove
           },
           {
-            type: `Rsh`,
+            type: `move`,
+            value: `Rsh`,
             class: ``,
             disableds: [],
+            canKeyIn: true,
+            keyValue: [`>`],
             callback: this.keyMove
           }
         ]
@@ -765,7 +811,7 @@ export default {
       }
     },
 
-    isSymbolEnd (key, symbol) {
+    isSpecifiedEnd (key, symbol) {
       return !!this.expressions.length && this.expressions[this.expressions.length - 1][key] === symbol
     },
 
@@ -789,7 +835,7 @@ export default {
 
     // key的动态样式
     keyClass (key) {
-      const switchMove = key.type === `↑` && this.isRotateMove ? 'active' : ''
+      const switchMove = key.value === `↑` && this.isRotateMove ? 'active' : ''
       const classList = [switchMove]
       return classList
     }
@@ -821,7 +867,7 @@ export default {
 
       methods: {
         createExtra () {
-          switch (this.keyItem.type) {
+          switch (this.keyItem.value) {
             case `(`:
               return this.extraLeftBracket > 0
                 ? <span class="extra-left-bracket">{ this.extraLeftBracket }</span>
