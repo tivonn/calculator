@@ -42,23 +42,28 @@ export default {
     }
   },
 
+  data () {
+    return {
+      memories: [] // 内存记录
+    }
+  }
+
   computed: {
     ...mapGetters([
       'binValue',
       'systemType',
-      'bitLengthCount',
-      'memories'
+      'bitLengthCount'
     ])
   },
 
   methods: {
     // 添加记录
     addMemory () {
-      let memories = [{
+      this.memories.unshift({
         id: new Date().getTime(), // 使用当前时间戳作为id
         value: this.binValue
-      }].concat(this.memories)
-      this.$store.dispatch('setMemories', memories)
+      })
+     
       this.$nextTick(() => { this.addAnimation() })
     },
 
@@ -82,10 +87,7 @@ export default {
     deleteMemory (index) {
       this.deleteAnimation(index)
       setTimeout(() => { // 延迟500ms执行是为了等动画执行完毕
-        // 为了不直接修改到state的数据，先浅拷贝一次再进行赋值
-        let memories = this.memories.slice()
-        memories.splice(index, 1)
-        this.$store.dispatch('setMemories', memories)
+        this.memories.splice(index, 1)
       }, 500)
     },
 
@@ -100,15 +102,12 @@ export default {
       let leftValue = concat0B(this.memories[index].value)
       let rightValue = concat0B(this.binValue)
       let newValue = calculate(`${leftValue}${arithmetic}${rightValue}`, true)
-      this.$store.dispatch('updateMemory', {
-        id: this.memories[index].id,
-        newValue
-      })
+      this.$set(this.memories[index], 'value', newValue)
     },
 
     // 重置记录
     resetMemory () {
-      this.$store.dispatch('setMemories', [])
+      this.memories = []
     },
 
     // 用于展示的值
