@@ -63,7 +63,6 @@ export default {
         id: new Date().getTime(), // 使用当前时间戳作为id
         value: this.binValue
       })
-     
       this.$nextTick(() => { this.addAnimation() })
     },
 
