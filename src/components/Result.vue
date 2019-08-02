@@ -46,7 +46,6 @@ export default {
         if (!isNegative(count) && system === `bin` && count !== `0`) {
           // 非负数时，二进制显示的值的length需要是4的倍数，按照4位一组补全
           count = this.setIntervalPrefix(count, 4, `0`)
-          
         }
         systems[system] = {
           count
@@ -89,6 +88,7 @@ export default {
             value = this.convertCount(this.bitValue, SYSTEM[`hex`], 3)
             break
           case (`bin`):
+            // 二进制取bit.vue组件中计算好的值显示
             value = this.bitValue
             break
           }
@@ -103,7 +103,7 @@ export default {
       let groupCount = value.length / interval
       for (let i = 0; i < groupCount; i++) {
         let groupValue = value.slice(i * interval, (i + 1) * interval)
-        systemValue = systemValue.concat(convertSystem(groupValue, SYSTEM[`bint`], system))
+        systemValue = systemValue.concat(convertSystem(groupValue, SYSTEM[`bin`], system))
       }
       return systemValue
     },

@@ -46,7 +46,7 @@ export default {
     return {
       memories: [] // 内存记录
     }
-  }
+  },
 
   computed: {
     ...mapGetters([

@@ -42,8 +42,8 @@ export default {
     return {
       keys: [ // 键位
         {
-          type: `move`,
-          value: `Lsh`, // 类型
+          type: `move`, // 类型
+          value: `Lsh`, // 显示的值
           class: [], // 类名
           disableds: [], // 禁用状态对应的进制
           canKeyIn: true, // 是否支持键盘输入
@@ -475,13 +475,12 @@ export default {
 
     // 左移右移
     keyMove (key) {
-      let { value } = key
       this.handleExpression(key)
     },
 
     // 循环左移右移
     keyRotateMove (key) {
-      let { direction } = key
+      let { direction } = key.value
       // 先补全位数
       let completeValue = setPrefixBit(this.binValue, this.bitLengthCount)
       // 进行移动
@@ -504,9 +503,9 @@ export default {
     // 按位运算
     keyBitwise (key) {
       this.handleExpression(key)
-      let { type } = key
+      let { value } = key
       // 按位非需要交换数字与符号顺序
-      if (type === `Not`) {
+      if (value === `Not`) {
         let length = this.expressions.length
         let endExpressions = [this.expressions[length - 1], this.expressions[length - 2]]
         this.$store.dispatch('setExpressions', this.expressions.slice(0, length - 2).concat(endExpressions))
@@ -616,7 +615,7 @@ export default {
     keyLeftBracket (key) {
       // 表达式最后为右括号或数字时，不增加左括号
       if (this.isRightBracketEnd || this.isValueEnd) return
-      ley { type, value } = key
+      let { type, value } = key
       this.addExpression({
         type,
         value

@@ -68,7 +68,7 @@ const actions = {
     commit(types.SET_BIT_LENGTH, value)
   },
 
-  setBitValue ({ commit}, value) {
+  setBitValue ({ commit }, value) {
     commit(types.SET_BIT_VALUE, value)
   }
 }
