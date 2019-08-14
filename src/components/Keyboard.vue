@@ -5,10 +5,10 @@
       <td v-for="key in keys.slice((rowIndex - 1) * 6, rowIndex * 6)" :key="key.value" colspan="1">
         <button
           class="key-item"
-          :class="[`${key.class} ${keyClass(key)}`, { 'active': isActive(key.value) }]"
+          :class="[`${key.class} ${keyClass(key)}`]"
           :disabled="isDisabled(key.disableds)"
           @click="key.callback(key)"
-          @mousemove="mouseMoveKey"
+          @mousemove="mouseMoveKey($event, key.value)"
           @mousedown="setActiveKey(key.value)"
           @mouseout="mouseOutKey">
           <span>{{ key.value }}</span>
@@ -380,7 +380,8 @@ export default {
         'Or': 7,
         ')': 0 // 此处特例，因为输入右括号时，将右括号优先级设置为最小，才能按照计算临时表达式的规则拿到前面一串表达式
       },
-      isRotateMove: false // 是否循环位移
+      isRotateMove: false, // 是否循环位移
+      hoverStatus: {} // hover的键位状态
     }
   },
 
@@ -822,17 +823,20 @@ export default {
     },
 
     // 设置键位样式
-    mouseMoveKey: throttle(function (e) {
-      let button = this.findEl(e, 'key-item')
+    mouseMoveKey: throttle(function (e, value) {
+      let button = this.findEl(e, `key-item`)
       if (!button) return
       // 将鼠标在键位中的x坐标与键位正中心x坐标比较
       let centerDistance = button.offsetWidth / 2 - (e.pageX - button.offsetLeft)
-      if (centerDistance > 0) { // 鼠标位置在左边
-        button.style.background = `linear-gradient(to right, #bebebe, #dbdbdb)`
-      } else if (centerDistance === 0) { // 鼠标位置在中间
-        button.style.background = `#dbdbdb`
-      } else if (centerDistance < 0) {
-        button.style.background = `linear-gradient(to right, #dbdbdb, #bebebe)`
+      let direction =
+        centerDistance > 0
+          ? `left`
+          : centerDistance === 0
+            ? `mid`
+            : `right`
+      this.hoverStatus = {
+        value,
+        direction
       }
     }, 10),
 
@@ -840,8 +844,10 @@ export default {
     mouseOutKey (e) {
       // 加上延时，防止mouseMoveKey的节流函数二次设置backGround
       setTimeout(() => {
-        let button = this.findEl(e, 'key-item')
-        button.style.background = `#f0f0f0`
+        this.hoverStatus = {
+          value: ``,
+          direction: ``
+        }
       }, 10)
     },
 
@@ -860,8 +866,10 @@ export default {
 
     // key的动态样式
     keyClass (key) {
-      const switchMove = key.value === `↑` && this.isRotateMove ? 'active' : ''
-      const classList = [switchMove]
+      const switchMove = key.value === `↑` && this.isRotateMove ? `switch-move-active` : ``
+      const hover = this.hoverStatus.value === key.value ? `${this.hoverStatus.direction}-hover` : ``
+      const active = this.isActive(key.value) ? `active` : ``
+      const classList = `${switchMove} ${hover} ${active}`
       return classList
     }
   },
@@ -927,8 +935,17 @@ export default {
     font-size: 13px;
     text-align: center;
     cursor: pointer;
+    &.left-hover {
+      background: linear-gradient(to right, #bebebe, #dbdbdb);
+    }
+    &.mid-hover {
+      background-color: #dbdbdb;
+    }
+    &.right-hover {
+      background: linear-gradient(to right, #dbdbdb, #bebebe);
+    }
     &.active {
-      background: #a5a5a5 !important;
+      background: #a5a5a5;
     }
     &[disabled] {
       color: #c8c8c8;
@@ -952,14 +969,8 @@ export default {
     &:hover {
       border-color: #dbdbdb;
     }
-    &.active {
+    &.switch-move-active {
       border-color: #409eff;
-    }
-  }
-  .key-arithmetic {
-    &:hover {
-      background-color: #409eff;
-      color: #fff;
     }
   }
   .extra-left-bracket {
