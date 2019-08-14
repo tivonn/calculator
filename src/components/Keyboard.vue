@@ -829,8 +829,8 @@ export default {
       let centerDistance = button.offsetWidth / 2 - (e.pageX - button.offsetLeft)
       if (centerDistance > 0) { // 鼠标位置在左边
         button.style.background = `linear-gradient(to right, #bebebe, #dbdbdb)`
-      } else if (centerDistance === 0) {  // 鼠标位置在中间
-        button.style.backgroundColor = `#dbdbdb`
+      } else if (centerDistance === 0) { // 鼠标位置在中间
+        button.style.background = `#dbdbdb`
       } else if (centerDistance < 0) {
         button.style.background = `linear-gradient(to right, #dbdbdb, #bebebe)`
       }
@@ -838,8 +838,11 @@ export default {
 
     // 还原键位样式
     mouseOutKey (e) {
-      let button = this.findEl(e, 'key-item')
-      button.style.background = `#f0f0f0`
+      // 加上延时，防止mouseMoveKey的节流函数二次设置backGround
+      setTimeout(() => {
+        let button = this.findEl(e, 'key-item')
+        button.style.background = `#f0f0f0`
+      }, 10)
     },
 
     // 根据类名查询元素
@@ -924,6 +927,9 @@ export default {
     font-size: 13px;
     text-align: center;
     cursor: pointer;
+    &.active {
+      background: #a5a5a5 !important;
+    }
     &[disabled] {
       color: #c8c8c8;
       &:hover {
