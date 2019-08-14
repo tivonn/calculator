@@ -482,7 +482,7 @@ export default {
 
     // 循环左移右移
     keyRotateMove (key) {
-      let { direction } = key.value
+      let direction = key.value
       // 先补全位数
       let completeValue = setPrefixBit(this.binValue, this.bitLengthCount)
       // 进行移动

@@ -91,8 +91,8 @@ export default {
             // 二进制取bit.vue组件中计算好的值显示
             value = this.bitValue
             break
-          }
         }
+      }
       return convertValue(value, system)
     },
 
