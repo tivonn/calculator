@@ -2,8 +2,7 @@
   <div id="app">
     <div class="calculator-container">
       <heading @show-sidebar="showSidebar = true"></heading>
-      <sidebar :show-sidebar="showSidebar">
-      </sidebar>
+      <sidebar :show-sidebar="showSidebar"></sidebar>
       <result></result>
       <navigation
         :show-keyboard="showKeyboard"
@@ -45,7 +44,7 @@ export default {
     this.init()
   },
 
-  // 虽然App.vue中写beforeDestroy意义不大，但为了保持良好的编程习惯，还是将移除挂载在全局的事件写上
+  // 虽然App.vue中写beforeDestroy意义不大，因为当App.vue的beforeDestroy被调用时整个系统已经被关闭了。但为了保持良好的编程习惯，还是将移除挂载在全局的事件写上
   beforeDestroy () {
     this.removeEventListener()
   },

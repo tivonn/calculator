@@ -8,7 +8,9 @@
           :class="[`${key.class} ${keyClass(key)}`, { 'active': isActive(key.value) }]"
           :disabled="isDisabled(key.disableds)"
           @click="key.callback(key)"
-          @mousedown="setActiveKey(key.value)">
+          @mousemove="mouseMoveKey"
+          @mousedown="setActiveKey(key.value)"
+          @mouseout="mouseOutKey">
           <span>{{ key.value }}</span>
           <!--定制化的额外文字-->
           <key-extra
@@ -24,7 +26,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import { SYSTEM } from '@/utils/enum'
-import { convertSystem, setPrefixBit, deletePrefixZero, inversePlusOne, concat0B, isNegative, calculate, extraSymbol } from '@/utils'
+import { convertSystem, setPrefixBit, deletePrefixZero, inversePlusOne, concat0B, isNegative, calculate, extraSymbol, throttle } from '@/utils'
 import Mousetrap from 'mousetrap'
 
 export default {
@@ -819,6 +821,32 @@ export default {
       return this.activeEl.value === value
     },
 
+    // 设置键位样式
+    mouseMoveKey: throttle(function (e) {
+      let button = this.findEl(e, 'key-item')
+      if (!button) return
+      // 将鼠标在键位中的x坐标与键位正中心x坐标比较
+      let centerDistance = button.offsetWidth / 2 - (e.pageX - button.offsetLeft)
+      if (centerDistance > 0) { // 鼠标位置在左边
+        button.style.background = `linear-gradient(to right, #bebebe, #dbdbdb)`
+      } else if (centerDistance === 0) {  // 鼠标位置在中间
+        button.style.backgroundColor = `#dbdbdb`
+      } else if (centerDistance < 0) {
+        button.style.background = `linear-gradient(to right, #dbdbdb, #bebebe)`
+      }
+    }, 10),
+
+    // 还原键位样式
+    mouseOutKey (e) {
+      let button = this.findEl(e, 'key-item')
+      button.style.background = `#f0f0f0`
+    },
+
+    // 根据类名查询元素
+    findEl (e, className) {
+      return e.path && e.path.find(path => path.classList.contains(className))
+    },
+
     // 设置当前active的键位
     setActiveKey (value) {
       this.$store.dispatch('setActiveEl', {
@@ -896,12 +924,6 @@ export default {
     font-size: 13px;
     text-align: center;
     cursor: pointer;
-    &:hover {
-      background-color: #dbdbdb;
-      &.active {
-        background-color: #bebebe;
-      }
-    }
     &[disabled] {
       color: #c8c8c8;
       &:hover {
