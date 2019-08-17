@@ -79,9 +79,6 @@ export default {
       for (let i = 0; i < disabledLength; i++) {
         this.showBinValue[i] = `0`
       }
-      // 截取当前位数对应的二进制数值
-      let bitValue = this.showBinValue.slice(-this.bitLengthCount, this.totalLength).join('')
-      this.$store.dispatch('setBitValue', bitValue)
     }
   },
 

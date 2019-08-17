@@ -19,7 +19,7 @@
 <script>
 import { mapGetters } from 'vuex'
 import { SYSTEM } from '@/utils/enum'
-import { convertSystem, convertValue, isNegative } from '@/utils'
+import { setIntervalPrefix, convertSystem, convertValue, isNegative } from '@/utils'
 
 export default {
   name: 'Result',
@@ -29,8 +29,7 @@ export default {
       'expressions',
       'binValue',
       'systemType',
-      'systemValue',
-      'bitValue'
+      'systemValue'
     ]),
 
     // 显示的表达式
@@ -45,7 +44,7 @@ export default {
         let count = convertSystem(this.binValue, SYSTEM[`bin`], SYSTEM[system])
         if (!isNegative(count) && system === `bin` && count !== `0`) {
           // 非负数时，二进制显示的值的length需要是4的倍数，按照4位一组补全
-          count = this.setIntervalPrefix(count, 4, `0`)
+          count = setIntervalPrefix(count, 4, `0`)
         }
         systems[system] = {
           count
@@ -73,49 +72,7 @@ export default {
 
     // 根据不同进制的显示规则来处理值
     convertValue (value, system) {
-      if (isNegative(value)) {
-        // 负数时，除十进制外，其余进制不用负号表示。二进制先求原码，转换为反码后再加1，十六进制和八进制需要以二进制为基准，转换显示
-        switch (system) {
-          case (`hex`):
-            // 十六进制，需要将二进制从右到左每4位合并为一组再转换
-            value = this.convertCount(this.bitValue, SYSTEM[`hex`], 4)
-            break
-          case (`dec`):
-            // 十进制不需要做额外处理
-            break
-          case (`oct`):
-            // 八进制，需要将二进制从右到左每3位合并为一组再转换
-            value = this.convertCount(this.bitValue, SYSTEM[`hex`], 3)
-            break
-          case (`bin`):
-            // 二进制取bit.vue组件中计算好的值显示
-            value = this.bitValue
-            break
-        }
-      }
       return convertValue(value, system)
-    },
-
-    // 将二进制根据间隔分组，转换为其它进制
-    convertCount (value, system, interval) {
-      value = this.setIntervalPrefix(value, interval, `0`)
-      let systemValue = ``
-      let groupCount = value.length / interval
-      for (let i = 0; i < groupCount; i++) {
-        let groupValue = value.slice(i * interval, (i + 1) * interval)
-        systemValue = systemValue.concat(convertSystem(groupValue, SYSTEM[`bin`], system))
-      }
-      return systemValue
-    },
-
-    // 根据间隔的长度补全位数
-    setIntervalPrefix (value, interval, prefix) {
-      let modCount = value.length % interval
-      if (modCount !== 0) {
-        return prefix.repeat(interval - modCount).concat(value)
-      } else {
-        return value
-      }
     },
 
     // 进制样式

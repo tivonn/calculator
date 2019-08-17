@@ -26,7 +26,8 @@
 <script>
 import { mapGetters } from 'vuex'
 import { SYSTEM } from '@/utils/enum'
-import { convertSystem, setPrefixBit, deletePrefixZero, inversePlusOne, concat0B, isNegative, calculate, extraSymbol, throttle } from '@/utils'
+import { convertSystem, setPrefixBit, deletePrefixZero, inversePlusOne, concat0B, isNegative, calculate, extraSymbol } from '@/utils'
+import { throttle } from '@/utils/performance'
 import Mousetrap from 'mousetrap'
 
 export default {
@@ -936,16 +937,16 @@ export default {
     text-align: center;
     cursor: pointer;
     &.left-hover {
-      background: linear-gradient(to right, #bebebe, #dbdbdb);
+      background: linear-gradient(to right, #cbcbcb, #dbdbdb);
     }
     &.mid-hover {
       background-color: #dbdbdb;
     }
     &.right-hover {
-      background: linear-gradient(to right, #dbdbdb, #bebebe);
+      background: linear-gradient(to right, #dbdbdb, #cbcbcb);
     }
     &.active {
-      background: #a5a5a5;
+      background: #b1b1b1;
     }
     &[disabled] {
       color: #c8c8c8;

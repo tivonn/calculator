@@ -7,8 +7,51 @@ export const convertSystem = (oldVlalue, from, to) => {
   return newValue
 }
 
+// 将二进制根据间隔分组，转换为其它进制
+export const convertCount = (value, system, interval) => {
+  value = setIntervalPrefix(value, interval, `0`)
+  let systemValue = ``
+  let groupCount = value.length / interval
+  for (let i = 0; i < groupCount; i++) {
+    let groupValue = value.slice(i * interval, (i + 1) * interval)
+    systemValue = systemValue.concat(convertSystem(groupValue, SYSTEM[`bin`], system))
+  }
+  return systemValue
+}
+
+// 根据间隔的长度补全位数
+export const setIntervalPrefix = (value, interval, prefix) => {
+  let modCount = value.length % interval
+  if (modCount) {
+    return prefix.repeat(interval - modCount).concat(value)
+  } else {
+    return value
+  }
+}
+
 // 根据不同进制的显示规则处理值
 export const convertValue = (value, system) => {
+  if (isNegative(value)) {
+    // 负数时，除十进制外，其余进制不用负号表示。二进制先求原码，转换为反码后再加1，十六进制和八进制需要以二进制为基准，转换显示
+    switch (system) {
+      case (`hex`):
+        // 十六进制，需要将二进制从右到左每4位合并为一组再转换
+        value = convertCount(convertBitValue(value, SYSTEM[`hex`]), SYSTEM[`hex`], 4)
+        break
+      case (`dec`):
+        // 十进制不需要做额外处理
+        break
+      case (`oct`):
+        // 八进制，需要将二进制从右到左每3位合并为一组再转换
+        value = convertCount(convertBitValue(value, SYSTEM[`oct`]), SYSTEM[`oct`], 3)
+        break
+      case (`bin`):
+        // 二进制，需要补全位数后取原码再取反码加1显示
+        value = convertBitValue(value, SYSTEM[`bin`])
+        break
+    }
+  }
+
   const convertMap = {
     'hex': {
       char: ` `,
@@ -35,6 +78,12 @@ export const convertValue = (value, system) => {
     newValue = newValue.toUpperCase()
   }
   return newValue
+}
+
+export const convertBitValue = (value, system) => {
+  let binValue = convertSystem(value, system, SYSTEM[`bin`])
+  let bitValue = setPrefixBit(binValue, store.getters.bitLengthCount)
+  return bitValue
 }
 
 // 根据间隔插入字符
@@ -67,7 +116,13 @@ export const setPrefixBit = (binValue, totalLength) => {
     let value = inversePlusOne(positiveValue, false)
     // 在取反后，前缀为0会被忽略，在出现位数减少的时候需要补全
     value = `0`.repeat(oldLength - value.length).concat(value)
-    return `1`.repeat(totalLength - value.length).concat(value)
+    if (totalLength - value.length > 0) {
+      return `1`.repeat(totalLength - value.length).concat(value)
+    } else if (totalLength - value.length === 0) {
+      return value
+    } else {
+      return value.split('').slice(-totalLength, value.length).join('')
+    }
   }
 }
 
@@ -142,21 +197,4 @@ export const extraSymbol = (expressions, moreSymbol, lessSymbol) => {
     }
   }
   return extraCount
-}
-
-// 节流
-export function throttle(fn, minDelay = 250, scope = null) {
-  let lastCall = 0
-  let timer = 0
-  return function () {
-    let now = +new Date()
-    if (now - lastCall < minDelay) {
-      // 使节流函数最后一次必定会执行
-      clearTimeout(timer)
-      return timer = setTimeout(fn.bind(scope || this, ...arguments), minDelay)
-    }
-    lastCall = now
-    clearTimeout(timer)
-    fn.apply(scope || this, arguments)
-  }
 }
