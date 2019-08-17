@@ -17,6 +17,11 @@
       ref="memory"
       :show-memory="showMemory">
     </memory>
+    <click-ring
+      v-if="showClickRing"
+      v-model="showClickRing"
+      :click-position="clickPosition">
+    </click-ring>
   </div>
 </template>
 
@@ -28,6 +33,7 @@ import Navigation from '@/components/Navigation'
 import Keyboard from '@/components/Keyboard'
 import Bit from '@/components/Bit'
 import Memory from '@/components/Memory'
+import ClickRing from '@/components/ClickRing'
 
 export default {
   name: 'App',
@@ -36,7 +42,12 @@ export default {
     return {
       showSidebar: false,
       showKeyboard: true,
-      showMemory: false
+      showMemory: false,
+      showClickRing: false,
+      clickPosition: {
+        x: 0,
+        y: 0
+      }
     }
   },
 
@@ -57,6 +68,7 @@ export default {
     // 监听事件
     addEventListener () {
       window.addEventListener('click', this.resetShowValue)
+      window.addEventListener('click', this.getClickPosition, true)
       window.addEventListener('mouseup', this.clearActiveEl)
     },
 
@@ -64,6 +76,18 @@ export default {
     resetShowValue () {
       this.showSidebar && (this.showSidebar = false)
       this.showMemory && (this.showMemory = false)
+    },
+
+    // 获取鼠标点击位置
+    getClickPosition (e) {
+      this.showClickRing = false // 先去除上一次点击动画
+      this.clickPosition = {
+        x: e.clientX,
+        y: e.clientY
+      }
+      this.$nextTick(() => {
+        this.showClickRing = true
+      })
     },
 
     // 清空当前active的元素
@@ -74,6 +98,7 @@ export default {
     // 移除监听事件
     removeEventListener () {
       window.removeEventListener('click', this.resetShowValue)
+      window.removeEventListener('click', this.getClickPosition)
       window.removeEventListener('mouseup', this.clearActiveEl)
     },
 
@@ -95,7 +120,8 @@ export default {
     Navigation,
     Keyboard,
     Bit,
-    Memory
+    Memory,
+    ClickRing
   }
 }
 </script>
