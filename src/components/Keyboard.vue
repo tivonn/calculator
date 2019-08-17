@@ -685,7 +685,7 @@ export default {
     // 计算表达式
     calculateExpressions (expressions, isTemp) {
       let calcExpressions = expressions.map(expression => this.convertCalc(expression)).join(``)
-      let result = calcExpressions.length ? calculate(calcExpressions, true) : `0`
+      let result = calcExpressions.length ? calculate(calcExpressions) : `0`
       if (!isTemp) {
         this.clearExpressions()
       }

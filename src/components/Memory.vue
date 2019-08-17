@@ -100,7 +100,7 @@ export default {
     updateMemory (arithmetic, index) {
       let leftValue = concat0B(this.memories[index].value)
       let rightValue = concat0B(this.binValue)
-      let newValue = calculate(`${leftValue}${arithmetic}${rightValue}`, true)
+      let newValue = calculate(`${leftValue}${arithmetic}${rightValue}`)
       this.$set(this.memories[index], 'value', newValue)
     },
 

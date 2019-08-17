@@ -139,7 +139,7 @@ export const deletePrefixZero = (value) => {
 // 二进制取反加一
 export const inversePlusOne = (value, needNegative) => {
   let inverseValue = concat0B(value.split('').map(bit => bit === `1` ? `0` : `1`).join(''))
-  let newValue = calculate(`(${inverseValue} + ${concat0B(`1`)})`, false)
+  let newValue = calculate(`(${inverseValue} + ${concat0B(`1`)})`)
   return `${needNegative ? `-` : ``}${newValue}`
 }
 
@@ -164,15 +164,11 @@ export const convertMinus = expressions => {
 }
 
 // 计算
-export const calculate = (expressions, needHandleOverflow) => {
+export const calculate = (expressions) => {
   // eslint-disable-next-line
   let calculateResult = eval(convertMinus(expressions))
   let binResult = convertSystem(calculateResult, SYSTEM[`dec`], SYSTEM[`bin`])
-  if (needHandleOverflow) {
-    return handleOverflow(binResult)
-  } else {
-    return binResult
-  }
+  return handleOverflow(binResult)
 }
 
 // 处理溢出
