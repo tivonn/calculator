@@ -30,7 +30,7 @@ export const setIntervalPrefix = (value, interval, prefix) => {
 }
 
 // 根据不同进制的显示规则处理值
-export const convertValue = (value, system) => {
+export const convertValue = (value, system, needIntervalChar) => {
   if (isNegative(value)) {
     // 负数时，除十进制外，其余进制不用负号表示。二进制先求原码，转换为反码后再加1，十六进制和八进制需要以二进制为基准，转换显示
     switch (system) {
@@ -51,28 +51,32 @@ export const convertValue = (value, system) => {
         break
     }
   }
-
-  const convertMap = {
-    'hex': {
-      char: ` `,
-      interval: 4
-    },
-    'dec': {
-      char: `,`,
-      interval: 3
-    },
-    'oct': {
-      char: ` `,
-      interval: 3
-    },
-    'bin': {
-      char: ` `,
-      interval: 4
+  let newValue
+  if (needIntervalChar) {
+    const convertMap = {
+      'hex': {
+        char: ` `,
+        interval: 4
+      },
+      'dec': {
+        char: `,`,
+        interval: 3
+      },
+      'oct': {
+        char: ` `,
+        interval: 3
+      },
+      'bin': {
+        char: ` `,
+        interval: 4
+      }
     }
+    let { char, interval } = convertMap[system]
+    // 先将符号省略，根据间隔插入分隔符后再补上符号
+    newValue = `${isNegative(value) ? `-` : ``}${insertIntervalChar(absValue(value), char, interval)}`
+  } else {
+    newValue = value
   }
-  let { char, interval } = convertMap[system]
-  // 先将符号省略，根据间隔插入分隔符后再补上符号
-  let newValue = `${isNegative(value) ? `-` : ``}${insertIntervalChar(absValue(value), char, interval)}`
   // 十六进制需要大写
   if (system === `hex`) {
     newValue = newValue.toUpperCase()

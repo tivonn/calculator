@@ -60,10 +60,7 @@ export default {
       switch (expression.type) {
         case `value`:
           let value = convertSystem(expression.value, SYSTEM[`bin`], SYSTEM[this.systemType])
-          // 十六进制需要大写
-          if (this.systemType === `hex`) {
-            value = value.toUpperCase()
-          }
+          value = convertValue(value, this.systemType, false)
           return value
         default:
           return expression.value
@@ -72,7 +69,7 @@ export default {
 
     // 根据不同进制的显示规则来处理值
     convertValue (value, system) {
-      return convertValue(value, system)
+      return convertValue(value, system, true)
     },
 
     // 进制样式

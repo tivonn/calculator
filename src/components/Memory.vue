@@ -118,7 +118,7 @@ export default {
 
     // 根据不同进制的显示规则处理值
     convertValue (value, system) {
-      return convertValue(value, system)
+      return convertValue(value, system, true)
     }
   }
 }
