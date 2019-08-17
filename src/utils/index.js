@@ -139,7 +139,9 @@ export const deletePrefixZero = (value) => {
 // 二进制取反加一
 export const inversePlusOne = (value, needNegative) => {
   let inverseValue = concat0B(value.split('').map(bit => bit === `1` ? `0` : `1`).join(''))
-  let newValue = calculate(`(${inverseValue} + ${concat0B(`1`)})`)
+  // eslint-disable-next-line
+  let newValue = eval(`(${inverseValue} + ${concat0B(`1`)})`)
+  newValue = convertSystem(newValue, SYSTEM[`dec`], SYSTEM[`bin`])
   return `${needNegative ? `-` : ``}${newValue}`
 }
 
