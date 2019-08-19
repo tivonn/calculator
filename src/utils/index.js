@@ -84,6 +84,7 @@ export const convertValue = (value, system, needIntervalChar) => {
   return newValue
 }
 
+// 根据位数计算二进制值
 export const convertBitValue = (value, system) => {
   let binValue = convertSystem(value, system, SYSTEM[`bin`])
   let bitValue = setPrefixBit(binValue, store.getters.bitLengthCount)
