@@ -17,11 +17,6 @@
       ref="memory"
       :show-memory="showMemory">
     </memory>
-    <click-ring
-      v-if="showClickRing"
-      v-model="showClickRing"
-      :click-position="clickPosition">
-    </click-ring>
   </div>
 </template>
 
@@ -33,7 +28,6 @@ import Navigation from '@/components/Navigation'
 import Keyboard from '@/components/Keyboard'
 import Bit from '@/components/Bit'
 import Memory from '@/components/Memory'
-import ClickRing from '@/components/ClickRing'
 
 export default {
   name: 'App',
@@ -42,12 +36,7 @@ export default {
     return {
       showSidebar: false,
       showKeyboard: true,
-      showMemory: false,
-      showClickRing: false,
-      clickPosition: {
-        x: 0,
-        y: 0
-      }
+      showMemory: false
     }
   },
 
@@ -55,7 +44,7 @@ export default {
     this.init()
   },
 
-  // 虽然App.vue中写beforeDestroy意义不大，因为当App.vue的beforeDestroy被调用时整个系统已经被关闭了。但为了保持良好的编程习惯，还是将移除挂载在全局的事件写上
+  // 虽然App.vue中写beforeDestroy意义不大，因为当App.vue的beforeDestroy被调用时整个系统已经被关闭了。但为了保持良好的编程习惯，还是将移除"挂载在全局的事件"的函数写上
   beforeDestroy () {
     this.removeEventListener()
   },
@@ -68,7 +57,6 @@ export default {
     // 监听事件
     addEventListener () {
       window.addEventListener('click', this.resetShowValue)
-      window.addEventListener('click', this.getClickPosition, true)
       window.addEventListener('mouseup', this.clearActiveEl)
     },
 
@@ -76,18 +64,6 @@ export default {
     resetShowValue () {
       this.showSidebar && (this.showSidebar = false)
       this.showMemory && (this.showMemory = false)
-    },
-
-    // 获取鼠标点击位置
-    getClickPosition (e) {
-      this.showClickRing = false // 先去除上一次点击动画
-      this.clickPosition = {
-        x: e.clientX,
-        y: e.clientY
-      }
-      this.$nextTick(() => {
-        this.showClickRing = true
-      })
     },
 
     // 清空当前active的元素
@@ -98,7 +74,6 @@ export default {
     // 移除监听事件
     removeEventListener () {
       window.removeEventListener('click', this.resetShowValue)
-      window.removeEventListener('click', this.getClickPosition)
       window.removeEventListener('mouseup', this.clearActiveEl)
     },
 
@@ -120,8 +95,7 @@ export default {
     Navigation,
     Keyboard,
     Bit,
-    Memory,
-    ClickRing
+    Memory
   }
 }
 </script>

@@ -842,7 +842,7 @@ export default {
     }, 10),
 
     // 还原键位样式
-    mouseOutKey (e) {
+    mouseOutKey () {
       // 加上延时，防止mouseMoveKey的节流函数二次设置backGround
       setTimeout(() => {
         this.hoverStatus = {
