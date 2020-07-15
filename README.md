@@ -2,7 +2,7 @@
 
 ## 项目介绍
 
-realize the function of windows 10's programmer calculator / win10程序员计算器web版本
+win10程序员计算器web版本 / realize the function of windows 10's programmer calculator
 
 ## 项目功能
 
